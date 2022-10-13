@@ -8,7 +8,7 @@ dict_1 = {'foo': 'bar', 'bar': 'buz'}
 dict_2 = {'dou': 'jones', 'USD': 36}
 dict_3 = {'AUD': 19.2, 'name': 'Tom'}
 
-# Answer from atackowerflow
+# Answer from stackowerflow
 d4 = dict(dict_1, **dict_2)
 d4.update(dict_3)
 
