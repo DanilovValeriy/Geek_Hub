@@ -14,6 +14,6 @@ def change_value(my_arr, num):
     return my_arr
 # tried to use lambda function to change last element, but nothing worked
 my_arr = map(lambda x: change_value(x, user_number), list(map(list, my_list)))
-my_arr = map(tuple, my_arr)
+my_arr = list(map(tuple, my_arr))
 
-print(list(my_arr))
+print(my_arr)
