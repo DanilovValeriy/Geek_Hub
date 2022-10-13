@@ -9,11 +9,11 @@ try:
 except ValueError as err:
     print(f'Got error: {err}', 'Please input integer number', sep='\n')
 
-def change_value(my_arr, num):
-    if not my_arr:
-        return my_arr
-    my_arr[-1] = num
-    return my_arr
+def change_value(list_value, num):
+    if not list_value:
+        return list_value
+    list_value[-1] = num
+    return list_value
 # tried to use lambda function to change last element, but nothing worked
 my_arr = map(lambda x: change_value(x, user_number), list(map(list, my_list)))
 my_arr = list(map(tuple, my_arr))
