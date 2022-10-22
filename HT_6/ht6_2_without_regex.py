@@ -19,5 +19,5 @@ def validation(password):
    return 'Your password is OK'
 
 # print(validation('rt'))
-# print(validation('gfhdj'))
-print(validation('@kfkhkfjdkjfc17'))
+# print(validation('gfhdj3333'))
+# print(validation('@kfkhkfjdkjfc17'))
