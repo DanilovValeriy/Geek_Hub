@@ -35,5 +35,4 @@ for user in users_list:
         print(f'Name: {user[0]}', f'Password: {user[1]}', f'Status: {validation(user[1])}', sep='\n')
     except MyException as my_err:
         print(f'Name: {user[0]}', f'Password: {user[1]}', f'Status: {my_err}', sep='\n')
-        # print(my_err)
     print()
