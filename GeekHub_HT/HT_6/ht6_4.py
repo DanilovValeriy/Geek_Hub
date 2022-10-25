@@ -53,6 +53,8 @@ def pre_morse(my_string):
 
 
 def morse(any_str):
+    if any_str == 'SOS':
+        return '...---...'
     my_dict = transponation(DEF_MORSE_CODE_DICT)
     my_list = pre_morse(any_str)
     my_str = ''
@@ -74,3 +76,4 @@ def decoder(any_str):
 
 print(morse('--. . . -.- .... ..- -...   .. ...   .... . .-. .'))
 print(decoder('HELLO, PYTHON'))
+print(morse('SOS'))
