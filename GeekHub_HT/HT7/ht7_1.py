@@ -4,3 +4,4 @@
 
 list_generator = [i for i in range(0,100,5) if i % 3 != 0]
 print(list_generator)
+# [5, 10, 20, 25, 35, 40, 50, 55, 65, 70, 80, 85, 95]
