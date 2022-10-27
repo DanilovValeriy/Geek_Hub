@@ -27,7 +27,7 @@ def my_range(*args):
     if len(args) > 3:
         raise MemoryError(f'my_range expected at most 3 arguments, got {len(args)}')
 
-    if len(args) == 1:
+    elif len(args) == 1:
         if args[0] < 1:
             yield []
         else:
@@ -45,21 +45,42 @@ def my_range(*args):
             while start < stop:
                 yield start
                 start += 1
-
     
+    else:
+        if args[2] == 0:
+            raise MyError('my_range() arg 3 must not be zero')
+        if args[0] > args[1] and args[2] > 0 or args[0] < args[1] and args[2] < 0:
+            yield []
+        elif args[0] < args[1]:
+            start = args[0]
+            stop = args[1]
+            step = args[2]
+            while start < stop:
+                yield start
+                start += step
+        else:
+            start = args[0]
+            stop = args[1]
+            step = args[2]
+            while start > stop:
+                yield start
+                start += step      
 
-    
 
+print(*range(-9))
+print(*my_range(-9))
 
-        
-        
-    
-# print(f'range = {range(0)}')
-# print(*range(10, 1, 7,7))
+print(*range(9))
+print(*my_range(9))
 
-# print('my_range = ', my_range(-90))
-print(*my_range(7, 17,6,6,6,6))
+print(*range(9, 1))
+print(*my_range(9, 1))
 
-# for i in my_range(1):
-#     print(i)
+print(*range(1, 9))
+print(*my_range(1, 9))
 
+print(*range(1, 9, 3))
+print(*my_range(1, 9, 3))
+
+print(*range(9, 1, -3))
+print(*range(9, 1, -3))
