@@ -13,7 +13,7 @@
 
 
 def counter_repitions(my_str):
-    return len({i for i in my_str if my_str.count(i) > 1})
+    return len({i for i in my_str if my_str.lower().count(i) > 1})
 
 # must return 2
 print(counter_repitions('Indivisibilities'))
@@ -23,3 +23,6 @@ print(counter_repitions("indivisibility"))
 
 # must return 0
 print(counter_repitions('abcdefgABCDEFG'))
+
+#must return2
+print(counter_repitions("aA11"))
