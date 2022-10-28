@@ -21,8 +21,8 @@ print(counter_repitions('Indivisibilities'))
 # must return 1
 print(counter_repitions("indivisibility"))
 
-# must return 0
+# must return 7
 print(counter_repitions('abcdefgABCDEFG'))
 
-#must return2
+#must return 2
 print(counter_repitions("aA11"))
