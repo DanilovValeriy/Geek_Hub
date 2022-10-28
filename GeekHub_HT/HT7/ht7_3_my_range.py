@@ -19,7 +19,6 @@ class MyError(BaseException):
 
 
 def my_range(*args):
-
     if not args:
         raise MyError('range expected at least 1 argument, got 0')
     if not all(list(map(lambda x: isinstance(x, int), args))):
@@ -29,7 +28,7 @@ def my_range(*args):
 
     elif len(args) == 1:
         if args[0] < 1:
-            yield []
+            yield None
         else:
             el = 0
             while el < args[0]:
@@ -38,7 +37,7 @@ def my_range(*args):
 
     elif len(args) == 2:
         if args[0] >= args[1]:
-            yield []
+            yield None
         else:
             start = args[0]
             stop = args[1]
@@ -50,7 +49,7 @@ def my_range(*args):
         if args[2] == 0:
             raise MyError('my_range() arg 3 must not be zero')
         if args[0] > args[1] and args[2] > 0 or args[0] < args[1] and args[2] < 0:
-            yield []
+            yield None
         elif args[0] < args[1]:
             start = args[0]
             stop = args[1]
@@ -68,7 +67,7 @@ def my_range(*args):
 
 
 print(*range(-9))
-print(*my_range(-9))
+print(my_range(-9))
 
 print(*range(9))
 print(*my_range(9))
