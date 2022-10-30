@@ -25,20 +25,14 @@ def blocks_of_data(my_file, number=1):
             elif len(my_str) == 2 and number == 1:
                 return middle_of_two_symbols(my_str)
             middle = len(my_str) // 2
-            print(len(my_str), middle, my_str[middle])
-
-        return [my_str[:number], my_str[middle - number // 2:middle + number // 2 + 1], my_str[-number:]]
+        return [my_str[:number], my_str[middle - number // 2:middle + number // 2 + number % 2], my_str[-number:]]
     except FileNotFoundError as err:
         print(err)
 
-
-# FileNotFoundError
 # blocks_of_data('111my_txt.txt', 9)
 
 # print(blocks_of_data('two_symbol.txt', 1))
 
-# print(blocks_of_data('one_symbol.txt', 3))
-print(blocks_of_data('my_txt.txt', 11))
+# print(blocks_of_data('one_symbol.txt', 1))
+print(blocks_of_data('my_txt.txt', 5))
 # a = middle_of_two_simbols('two_simbol.txt')
-# for el in a:
-#     print(a)
