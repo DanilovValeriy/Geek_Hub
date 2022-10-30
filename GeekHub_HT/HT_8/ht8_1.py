@@ -44,7 +44,7 @@ while True:
 # with open('my_file.txt', 'w', encoding='utf-8') as file:
 #     file.write('get ready to go\n')
 
-# with open('my_file.txt', 'a', encoding='utf-8') as file:
+# with open('my_file.txt', 'a+', encoding='utf-8') as file:
 #     index = 0
 #     while True:
 #         if index % 2:
