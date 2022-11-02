@@ -27,6 +27,7 @@
     P.S.S. Добре продумайте структуру програми та функцій'''
 
 import csv
+import json
 
 
 def users_validate(file, my_user, my_pass):
@@ -36,6 +37,31 @@ def users_validate(file, my_user, my_pass):
             if el.get('user') == my_user and el.get('password') == my_pass:
                 return True
     return False
+
+
+def my_logger(file, my_log=0):
+    with open(file, 'a', encoding='utf-8') as my_file:
+        print(json.load(my_file))
+
+
+# my_logger('Valerii_transaction.json')
+
+person_dict = {"name": "Bob",
+               "languages": ["English", "French"],
+               "married": True,
+               "age": 32
+               }
+
+with open('Valerii_transaction.json', 'a') as json_file:
+    json.dump(person_dict, json_file)
+
+# def my():
+#     p = '{"name": "Bob", "languages": ["English", "French"]}'
+#     bb = json.loads(p)
+#     print(bb)
+
+
+# my()
 
 
 def validate_number(number):
@@ -51,8 +77,7 @@ def check_score(file, my_sum=0):
     with open(file) as my_file:
         return float(my_file.readline()) >= my_sum
 
-
-print(check_score('Valerii_balance.txt', 4444))
+# print(check_score('Valerii_balance.txt', 4444))
 # with open('users.csv', 'r', encoding='utf-8') as file:
 #     print(csv.DictReader(file))
 # print(csv.DictReader(file))
