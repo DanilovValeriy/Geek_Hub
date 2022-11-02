@@ -38,6 +38,21 @@ def users_validate(file, my_user, my_pass):
     return False
 
 
+def validate_number(number):
+    try:
+        number = float(number)
+    except ValueError as err:
+        print(err)
+        return False
+    return number
+
+
+def check_score(file, my_sum=0):
+    with open(file) as my_file:
+        return float(my_file.readline()) >= my_sum
+
+
+print(check_score('Valerii_balance.txt', 4444))
 # with open('users.csv', 'r', encoding='utf-8') as file:
 #     print(csv.DictReader(file))
 # print(csv.DictReader(file))
@@ -46,4 +61,4 @@ def users_validate(file, my_user, my_pass):
 #     print(el["user"] == "Valerii")
 
 
-print((users_validate('users.csv', 'Valerrrii', 'cherkasy85')))
+# print((users_validate('users.csv', 'Valerii', 'cherkasy85')))
