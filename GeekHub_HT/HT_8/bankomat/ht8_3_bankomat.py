@@ -58,6 +58,22 @@ def validate_number(number):
     return number
 
 
+def add_user_files(name):
+    file_transaction = name + '_transaction.json'
+    file_balance = name + '_balance.txt'
+    with open(file_transaction, encoding='utf-8') as ft:
+        pass
+    with open(file_balance, encoding='utf-8') as fb:
+        pass
+
+
+def add_in_users(name, password):
+    with open('users.csv', 'a', encoding='utf-8') as users_f:
+        fieldnames = ["user", "password"]
+        writer = csv.DictWriter(users_f, fieldnames, dialect='unix')
+        writer.writerow({"user": f"{name}", "password": f"{password}"})
+
+
 def check_score(file, my_sum=0):
     with open(file) as my_file:
         return float(my_file.readline()) >= my_sum
