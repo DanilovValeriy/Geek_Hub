@@ -1,0 +1,25 @@
+{
+"Action": "Show balance"
+}{
+"Action": "There are not enough funds in the account"
+}{
+"Action": "Show balance"
+}{
+"Action": "Your balance successful updated. Sum after operation: -50.0"
+}{
+"Action": "Show balance"
+}{
+"Action": "Your balance successful updated. Sum after operation: 0.0"
+}{
+"Action": "Show balance"
+}{
+"Action": "Show balance"
+}{
+"Action": "You can't put less than zero"
+}{
+"Action": "Show balance"
+}{
+"Action": "Your balance successful updated. Sum after operation: 100.0"
+}{
+"Action": "There are not enough funds in the account"
+}

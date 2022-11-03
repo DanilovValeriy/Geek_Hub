@@ -116,6 +116,10 @@ def start():
                     case 2:
                         try:
                             my_sum = float(input('How much money do you want to put into the account?\n'))
+                            if my_sum < 0:
+                                print("You can't put less than zero")
+                                my_logger(u_name, {"Action": "You can't put less than zero"})
+                                continue
                             message = f"Your balance successful updated. {change_balance(u_name, my_sum, '+')}"
                             my_logger(u_name, {"Action": message})
                             print(message)
