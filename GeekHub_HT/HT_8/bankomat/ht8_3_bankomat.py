@@ -38,10 +38,13 @@ def users_validate(my_user, my_pass, file='users.csv'):
     return False
 
 
-def my_logger(file, my_log):
+def my_logger(name, my_log):
+    file = name + '_transaction.json'
     with open(file, 'a+') as my_file:
-        json.dump(my_log, my_file, indent=4)
+        json.dump(my_log, my_file, indent='')
 
+
+my_logger('Valerii', {"message": "Valerii, Your account successfully update"})
 
 def validate_number(number):
     try:
