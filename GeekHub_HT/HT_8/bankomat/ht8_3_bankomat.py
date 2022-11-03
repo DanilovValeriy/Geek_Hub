@@ -30,10 +30,9 @@ import csv
 import json
 
 
-def users_validate(file, my_user, my_pass):
+def users_validate(my_user, my_pass, file='users.csv'):
     with open(file, 'r', encoding='utf-8') as my_file:
         for el in csv.DictReader(my_file):
-            print(el)
             if el.get('user') == my_user and el.get('password') == my_pass:
                 return True
     return False
@@ -42,11 +41,6 @@ def users_validate(file, my_user, my_pass):
 def my_logger(file, my_log):
     with open(file, 'a+') as my_file:
         json.dump(my_log, my_file, indent=4)
-
-
-my_logger("Valerii_transaction.json", {"activity": "balance checking", "result": "there are not enough funds in the "
-                                                                                 "account"})
-person_dict = {"name": "Bob", "languages": ["English", "French"], "married": True, "age": 32}
 
 
 def validate_number(number):
@@ -79,3 +73,18 @@ def check_score(file, my_sum=0):
         return float(my_file.readline()) >= my_sum
 
 
+def change_balance(file, number, operation='-'):
+    with open(file, 'r', encoding='utf-8') as f:
+        my_sum = float(f.read())
+
+    with open(file, 'w', encoding='utf-8') as f:
+        if operation == '-':
+            sum_after = my_sum - number
+            f.write(str(sum_after))
+        else:
+            sum_after = my_sum + number
+            f.write(str(sum_after))
+    return f'sum after operation: {sum_after}'
+
+
+print(change_balance('Valerii_balance.txt', 500, '+'))
