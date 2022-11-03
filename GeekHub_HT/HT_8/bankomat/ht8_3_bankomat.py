@@ -73,7 +73,8 @@ def check_score(file, my_sum=0):
         return float(my_file.readline()) >= my_sum
 
 
-def change_balance(file, number, operation='-'):
+def change_balance(name, number, operation='-'):
+    file = name + '_balance.txt'
     with open(file, 'r', encoding='utf-8') as f:
         my_sum = float(f.read())
 
@@ -84,7 +85,13 @@ def change_balance(file, number, operation='-'):
         else:
             sum_after = my_sum + number
             f.write(str(sum_after))
-    return f'sum after operation: {sum_after}'
+    return f'Sum after operation: {sum_after}'
+
+
+def show_balance(name):
+    file_name = name + '_balance.txt'
+    with open(file_name) as fn:
+        return float(fn.read())
 
 
 def start():
@@ -102,5 +109,28 @@ def start():
 
     else:
         print(f'Hi, {u_name}')
+        try:
+            choice = int(input('Choice operation\n1. Look at the balance\n2. Top up the balance\n'
+                         '3. Take the money\n4. Exit\n'))
+            match choice:
+                case 1:
+                    return show_balance(u_name)
 
-start()
+                case 2:
+                    try:
+                        my_sum = float(input('How much money do you want to put into the account?\n'))
+                        message = f"Your balance successful updated. {change_balance(u_name, my_sum, '+')}"
+                        print(message)
+                    except ValueError as err:
+                        print(err)
+
+        except ValueError as err:
+            print(err)
+            return None
+
+
+# start()
+# 1. Подивитись баланс
+# 2. Поповнити баланс
+# 3. Take the money
+# 4. Вихід
