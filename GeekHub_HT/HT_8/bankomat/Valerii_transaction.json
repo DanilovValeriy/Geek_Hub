@@ -58,4 +58,10 @@
 }{
     "activity": "balance checking",
     "result": "there are not enough funds in the account"
+}{
+    "activity": "balance checking",
+    "result": "there are not enough funds in the account"
+}{
+    "activity": "balance checking",
+    "result": "there are not enough funds in the account"
 }

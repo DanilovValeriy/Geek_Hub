@@ -61,9 +61,9 @@ def validate_number(number):
 def add_user_files(name):
     file_transaction = name + '_transaction.json'
     file_balance = name + '_balance.txt'
-    with open(file_transaction, encoding='utf-8') as ft:
+    with open(file_transaction, 'w', encoding='utf-8') as ft:
         pass
-    with open(file_balance, encoding='utf-8') as fb:
+    with open(file_balance, 'w', encoding='utf-8') as fb:
         pass
 
 
