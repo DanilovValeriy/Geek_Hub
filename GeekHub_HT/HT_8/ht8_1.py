@@ -23,7 +23,7 @@
 from time import sleep
 
 
-COLOR_LIST = [('Red', 'Green'), ('Yellow', 'Red'), ('Green', 'Red')]
+COLOR_LIST = [('Red', 'Green'), ('Yellow', 'Red'), ('Green', 'Red'), ('Yellow', 'Red')]
 
 
 index = 0
@@ -38,7 +38,7 @@ while True:
             print(COLOR_LIST[index][0], COLOR_LIST[index][1])
             sleep(1)
     index += 1
-    index %= 3 
+    index %= 4
 
 
 # with open('my_file.txt', 'w', encoding='utf-8') as file:
