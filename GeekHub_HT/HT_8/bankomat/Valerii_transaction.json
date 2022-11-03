@@ -12,4 +12,8 @@
 "Action": "Your balance successful updated. Sum after operation: 100000.0"
 }{
 "Action": "There are not enough funds in the account"
+}{
+"Action": "Show balance"
+}{
+"Action": "You can't put less than zero"
 }
