@@ -1,1 +1,40 @@
-{"name": "Bob", "languages": ["English", "French"], "married": true, "age": 32}{"name": "Bob", "languages": ["English", "French"], "married": true, "age": 32}{"name": "Bob", "languages": ["English", "French"], "married": true, "age": 32}
+{
+    "name": "Bob",
+    "languages": [
+        "English",
+        "French"
+    ],
+    "married": true,
+    "age": 32
+}{
+    "name": "Bob",
+    "languages": [
+        "English",
+        "French"
+    ]
+}{
+    "name": "Bob",
+    "languages": [
+        "English",
+        "French"
+    ],
+    "married": true,
+    "age": 32
+}{
+    "name": "Bob",
+    "languages": [
+        "English",
+        "French"
+    ]
+}{
+    "activity": "balance checking"
+}{
+    "activity": "balance checking",
+    "result": "there are not enough funds in the account"
+}{
+    "activity": "balance checking",
+    "result": "there are not enough funds in the account"
+}{
+    "activity": "balance checking",
+    "result": "there are not enough funds in the account"
+}

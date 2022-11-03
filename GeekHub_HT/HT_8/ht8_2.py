@@ -29,10 +29,9 @@ def blocks_of_data(my_file, number=1):
     except FileNotFoundError as err:
         print(err)
 
-# blocks_of_data('111my_txt.txt', 9)
 
 # print(blocks_of_data('two_symbol.txt', 1))
 
 # print(blocks_of_data('one_symbol.txt', 1))
 print(blocks_of_data('my_txt.txt', 5))
-# a = middle_of_two_simbols('two_simbol.txt')
+# a = middle_of_two_simbols('two_symbol.txt')
