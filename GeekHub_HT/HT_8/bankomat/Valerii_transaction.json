@@ -4,4 +4,12 @@
 "Action": "Show balance"
 }{
 "Action": "Show balance"
+}{
+"Action": "Show balance"
+}{
+"Action": "Your balance successful updated. Sum after operation: 101100.0"
+}{
+"Action": "Your balance successful updated. Sum after operation: 100000.0"
+}{
+"Action": "There are not enough funds in the account"
 }

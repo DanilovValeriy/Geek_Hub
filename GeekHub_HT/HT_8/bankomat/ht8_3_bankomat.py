@@ -103,42 +103,44 @@ def start():
 
     else:
         print(f'Hi, {u_name}')
-        try:
-            choice = int(input('Choice operation\n1. Look at the balance\n2. Top up the balance\n'
-                               '3. Take the money\n4. Exit\n'))
-            match choice:
-                case 1:
-                    my_logger(u_name, {"Action": "Show balance"})
-                    print(show_balance(u_name))
+        choice = 0
+        while choice != 4:
+            try:
+                choice = int(input('Choice operation\n1. Look at the balance\n2. Top up the balance\n'
+                                   '3. Take the money\n4. Exit\n'))
+                match choice:
+                    case 1:
+                        my_logger(u_name, {"Action": "Show balance"})
+                        print(show_balance(u_name))
 
-                case 2:
-                    try:
-                        my_sum = float(input('How much money do you want to put into the account?\n'))
-                        message = f"Your balance successful updated. {change_balance(u_name, my_sum, '+')}"
-                        my_logger(u_name, {"Action": message})
-                        print(message)
-                    except ValueError as err:
-                        print(err)
-
-                case 3:
-                    try:
-                        my_sum = float(input('how much money you want to withdraw from the account?\n'))
-                        if check_score(u_name, my_sum):
-                            message = f"Your balance successful updated. {change_balance(u_name, my_sum, '-')}"
+                    case 2:
+                        try:
+                            my_sum = float(input('How much money do you want to put into the account?\n'))
+                            message = f"Your balance successful updated. {change_balance(u_name, my_sum, '+')}"
                             my_logger(u_name, {"Action": message})
                             print(message)
-                        else:
-                            print('There are not enough funds in the account')
-                            my_logger(u_name, {"Action": "There are not enough funds in the account"})
-                    except ValueError as err:
-                        print(err)
+                        except ValueError as err:
+                            print(err)
 
-                case 4:
-                    print('Have a nice day. Good bye')
+                    case 3:
+                        try:
+                            my_sum = float(input('how much money you want to withdraw from the account?\n'))
+                            if check_score(u_name, my_sum):
+                                message = f"Your balance successful updated. {change_balance(u_name, my_sum, '-')}"
+                                my_logger(u_name, {"Action": message})
+                                print(message)
+                            else:
+                                print('There are not enough funds in the account')
+                                my_logger(u_name, {"Action": "There are not enough funds in the account"})
+                        except ValueError as err:
+                            print(err)
 
-        except ValueError as err:
-            print(err)
-            return None
+                    case 4:
+                        print('Have a nice day. Good bye')
+
+            except ValueError as err:
+                print(err)
+                return None
 
 
 start()
