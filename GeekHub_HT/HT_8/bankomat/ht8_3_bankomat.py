@@ -13,7 +13,7 @@
    Особливості функціонала:
       - за кожен функціонал відповідає окрема функція;
       - основна функція - <start()> - буде в собі містити весь workflow банкомата:
-      - на початку роботи - логін користувача (програма запитує ім'я/пароль). 
+      - на початку роботи - логін користувача (програма запитує ім'я/пароль).
       Якщо вони неправильні - вивести повідомлення про це і закінчити роботу (
         хочете - зробіть 3 спроби, а потім вже закінчити роботу - все на ентузіазмі :))
       - потім - елементарне меню типн:
@@ -87,4 +87,20 @@ def change_balance(file, number, operation='-'):
     return f'sum after operation: {sum_after}'
 
 
-print(change_balance('Valerii_balance.txt', 500, '+'))
+def start():
+    u_name, u_password = input('Hi! Input your name and password, space separated\n').split(' ')
+    if not users_validate(u_name, u_password):
+        print('You are not registered in our system')
+        answer = input('Would you like to register? Y/N\n')
+        if answer not in {'y', 'Y'}:
+            print('Have a nice day. Good by')
+            return None
+        else:
+            add_in_users(u_name, u_password)
+            add_user_files(u_name)
+            print(f'You successful added in our system\nUser: {u_name} with password: {u_password}')
+
+    else:
+        print(f'Hi, {u_name}')
+
+start()
