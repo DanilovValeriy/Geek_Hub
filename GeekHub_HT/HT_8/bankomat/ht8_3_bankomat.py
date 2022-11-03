@@ -44,24 +44,14 @@ def my_logger(name, my_log):
         json.dump(my_log, my_file, indent='')
 
 
-my_logger('Valerii', {"message": "Valerii, Your account successfully update"})
-
-def validate_number(number):
-    try:
-        number = float(number)
-    except ValueError as err:
-        print(err)
-        return False
-    return number
-
-
 def add_user_files(name):
     file_transaction = name + '_transaction.json'
     file_balance = name + '_balance.txt'
+
     with open(file_transaction, 'w', encoding='utf-8') as ft:
         pass
     with open(file_balance, 'w', encoding='utf-8') as fb:
-        pass
+        fb.write('0')
 
 
 def add_in_users(name, password):
@@ -71,7 +61,8 @@ def add_in_users(name, password):
         writer.writerow({"user": f"{name}", "password": f"{password}"})
 
 
-def check_score(file, my_sum=0):
+def check_score(name, my_sum=0):
+    file = name + '_balance.txt'
     with open(file) as my_file:
         return float(my_file.readline()) >= my_sum
 
@@ -114,26 +105,40 @@ def start():
         print(f'Hi, {u_name}')
         try:
             choice = int(input('Choice operation\n1. Look at the balance\n2. Top up the balance\n'
-                         '3. Take the money\n4. Exit\n'))
+                               '3. Take the money\n4. Exit\n'))
             match choice:
                 case 1:
-                    return show_balance(u_name)
+                    my_logger(u_name, {"Action": "Show balance"})
+                    print(show_balance(u_name))
 
                 case 2:
                     try:
                         my_sum = float(input('How much money do you want to put into the account?\n'))
                         message = f"Your balance successful updated. {change_balance(u_name, my_sum, '+')}"
+                        my_logger(u_name, {"Action": message})
                         print(message)
                     except ValueError as err:
                         print(err)
+
+                case 3:
+                    try:
+                        my_sum = float(input('how much money you want to withdraw from the account?\n'))
+                        if check_score(u_name, my_sum):
+                            message = f"Your balance successful updated. {change_balance(u_name, my_sum, '-')}"
+                            my_logger(u_name, {"Action": message})
+                            print(message)
+                        else:
+                            print('There are not enough funds in the account')
+                            my_logger(u_name, {"Action": "There are not enough funds in the account"})
+                    except ValueError as err:
+                        print(err)
+
+                case 4:
+                    print('Have a nice day. Good bye')
 
         except ValueError as err:
             print(err)
             return None
 
 
-# start()
-# 1. Подивитись баланс
-# 2. Поповнити баланс
-# 3. Take the money
-# 4. Вихід
+start()
