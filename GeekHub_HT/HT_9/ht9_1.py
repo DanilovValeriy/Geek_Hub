@@ -64,6 +64,19 @@ def look_balance(my_login):
         if el[0] == my_login:
             return el[1]
 
+
+def check_number(number):
+    try:
+        number = float(number)
+        if number < 0:
+            print('The sum can not be less zero')
+            return False
+        else:
+            return number
+    except ValueError as err:
+        print(err)
+        return False
+
 # 1. Look at the balance
 # 2. Top up the balance
 # 3. Take the money

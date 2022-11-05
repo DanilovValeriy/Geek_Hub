@@ -10,6 +10,18 @@ sql.execute("""CREATE TABLE IF NOT EXISTS users (
             )""")
 db.commit()
 
+def check_number(number):
+    try:
+        number = float(number)
+        if number < 0:
+            print('The sum can not be less zero')
+            return False
+        else:
+            return number
+    except ValueError as err:
+        print(err)
+        return False
+
 
 def add_users(my_login1, my_password1):
     sql.execute(f"INSERT INTO users (login, password, balance, is_collector) VALUES (?, ?, ?, ?)",
@@ -47,6 +59,9 @@ def look_balance(my_login):
     for el in sql.fetchall():
         if el[0] == my_login:
             return el[1]
+
+
+def add_balance(my_login, number):
 
 
 print(look_balance('Den'))
