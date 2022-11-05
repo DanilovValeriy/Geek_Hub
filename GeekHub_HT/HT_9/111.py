@@ -42,7 +42,14 @@ def check_user_in_system(my_login, my_password):
         return False
 
 
-# print(check_user_in_system('Ashot', '12345g'))
+def look_balance(my_login):
+    sql.execute(f"SELECT login, balance FROM users")
+    for el in sql.fetchall():
+        if el[0] == my_login:
+            return el[1]
+
+
+print(look_balance('Den'))
 
 sql.close()
 

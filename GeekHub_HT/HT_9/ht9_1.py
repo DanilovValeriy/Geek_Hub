@@ -57,6 +57,13 @@ def check_user_in_system(my_login, my_password):
         print("Invalid login or password")
         return False
 
+
+def look_balance(my_login):
+    sql.execute(f"SELECT login, balance FROM users")
+    for el in sql.fetchall():
+        if el[0] == my_login:
+            return el[1]
+
 # 1. Look at the balance
 # 2. Top up the balance
 # 3. Take the money
