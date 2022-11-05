@@ -10,6 +10,7 @@ sql.execute("""CREATE TABLE IF NOT EXISTS users (
             )""")
 db.commit()
 
+
 def check_number(number):
     try:
         number = float(number)
@@ -61,8 +62,27 @@ def look_balance(my_login):
             return el[1]
 
 
-def add_balance(my_login, number):
+def change_balance(my_login, number, oper='+'):
+    if not (check_number(number)):
+        return None
+    else:
+        balance = look_balance(my_login)
+        if oper == '+':
+            sql.execute(f"UPDATE users set balance =? where login =?", (balance + number, my_login))
+            db.commit()
+            print(f'Your account has been topped up. The amount on the account is {look_balance(my_login)}')
+        else:
+            if number > balance:
+                print('There are not enough funds in your account to complete the transaction')
+                return None
+            else:
+                sql.execute(f"UPDATE users set balance =? where login =?", (balance - number, my_login))
+                db.commit()
+                print(f'You have withdrawn {number}. The amount in the account is {look_balance(my_login)}')
 
+
+print(look_balance('Den'))
+change_balance('Den', 100, '-')
 
 print(look_balance('Den'))
 
