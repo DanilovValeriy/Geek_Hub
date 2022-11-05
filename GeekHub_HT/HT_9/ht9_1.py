@@ -41,3 +41,23 @@ def is_login_allowed(my_login):
     else:
         print('There is no user with this login in the system')
         return True
+
+
+def check_password(my_password):
+    return bool(len(my_password) > 5 and set('!@#$%^&*').intersection(set(my_password)))
+
+
+def check_user_in_system(my_login, my_password):
+    sql.execute("SELECT login, password FROM users")
+    if (my_login, my_password) in sql.fetchall():
+        print("Welcome to the system")
+        return True
+    else:
+        print("You don't have access to system")
+        print("Invalid login or password")
+        return False
+
+# 1. Look at the balance
+# 2. Top up the balance
+# 3. Take the money
+# 4. Exit

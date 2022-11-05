@@ -11,28 +11,10 @@ sql.execute("""CREATE TABLE IF NOT EXISTS users (
 db.commit()
 
 
-# sql.execute(
-#     "INSERT INTO users (login, password, balance, is_collector) VALUES ('my_login', 'my_password', "
-#     "0, False)")
-# db.commit()
-
-
-# def login_user(my_login, my_password):
-#     sql.execute(
-#         "INSERT INTO users (login, password, balance, is_collector) VALUES ('my_login', 'my_password', "
-#         "0, False)")
-#
-#     db.commit()
-
-
 def add_users(my_login1, my_password1):
     sql.execute(f"INSERT INTO users (login, password, balance, is_collector) VALUES (?, ?, ?, ?)",
                 (my_login1, my_password1, 0, False))
     db.commit()
-
-
-# add_users('Ashot', '12345')
-# add_users('Den', 'frgdhGG^')
 
 
 def is_login_allowed(my_login):
@@ -45,16 +27,26 @@ def is_login_allowed(my_login):
         return True
 
 
-is_login_allowed('Dens')
+def check_password(my_password):
+    return bool(len(my_password) > 5 and set('!@#$%^&*').intersection(set(my_password)))
 
-# d = sql.execute("SELECT login FROM users")
-# for el in sql.fetchall():
-#     print(el)
-# print(sql.fetchall())
-# d = sql.fetchone("SELECT login FROM users")
-# print(d[0])
-# print(is_login_allowed('Valerii'))
-# is_login_exist('Valerkii')
-# login_user('Valerii', '123456')
+
+def check_user_in_system(my_login, my_password):
+    sql.execute("SELECT login, password FROM users")
+    if (my_login, my_password) in sql.fetchall():
+        print("Welcome to the system")
+        return True
+    else:
+        print("You don't have access to system")
+        print("Invalid login or password")
+        return False
+
+
+# print(check_user_in_system('Ashot', '12345g'))
 
 sql.close()
+
+# 1. Look at the balance
+# 2. Top up the balance
+# 3. Take the money
+# 4. Exit
