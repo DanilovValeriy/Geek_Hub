@@ -25,21 +25,23 @@ import sqlite3
 
 db = sqlite3.connect('server.db')
 sql = db.cursor()
-sql.execute("""CREATE TABLE IF NOT EXISTS users (
-            login TEXT,
-            password TEXT,
-            balance BIGINT,
-            is_collector BOOLEAN            
-            )""")
-db.commit()
 
-USERS = [
-    ('Den', 'FRt%^%56', 1000, False),
-    ('Valerii', '1234%%55', 1000, False),
-    ('admin', 'admin', 10000, True)
-]
-sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
-db.commit()
+
+# sql.execute("""CREATE TABLE IF NOT EXISTS users (
+#             login TEXT,
+#             password TEXT,
+#             balance BIGINT,
+#             is_collector BOOLEAN
+#             )""")
+# db.commit()
+
+# USERS = [
+#     ('Den', 'FRt%^%56', 1000, False),
+#     ('Valerii', '1234%%55', 1000, False),
+#     ('admin', 'admin', 10000, True)
+# ]
+# sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
+# db.commit()
 
 
 def add_users(my_login1, my_password1):
@@ -54,7 +56,7 @@ def is_login_allowed(my_login):
         print("You can't use this login")
         return False
     else:
-        print('There is no user with this login in the system')
+        print('You can use this login')
         return True
 
 
@@ -110,6 +112,49 @@ def change_balance(my_login, number, oper='+'):
                 sql.execute(f"UPDATE users set balance =? where login =?", (balance - number, my_login))
                 db.commit()
                 print(f'You have withdrawn {number}. The amount in the account is {look_balance(my_login)}')
+
+
+def login_or_create():
+    flag = True
+    while flag:
+        choice = input('Do you have an account?. y/n. Press x to exit\n')
+        if choice in {'x', 'X'}:
+            flag = False
+            print('Have a nice day')
+            continue
+
+        elif choice in {'y', 'Y'}:
+            login = input('Input your login: ')
+            password = input('Input your password: ')
+            check_user_in_system(login, password)
+
+        elif choice in {'n', 'N'}:
+            sec_choice = input('Do you want to create an account? y/n\n')
+            if sec_choice in {'y', 'Y'}:
+                fl = True
+                while fl:
+                    my_login = input('Input your login: ')
+                    if not is_login_allowed(my_login):
+                        continue
+                    else:
+                        iter = 1
+                        while iter < 4:
+                            my_password = input("Input password more than 5 letters, consider one of '!@#$%^&' "
+                                                "simbols: ")
+                            if check_password(my_password):
+                                add_users(my_login, my_password)
+                                print('Your account successfully create')
+                                print(f'Your login {my_login}, your password {my_password}')
+                                iter = 4
+                                fl = False
+
+
+def start():
+
+
+
+
+login_or_create()
 
 # 1. Look at the balance
 # 2. Top up the balance
