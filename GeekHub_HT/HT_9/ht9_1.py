@@ -23,8 +23,23 @@
     '''
 import sqlite3
 
-db = sqlite3.connect('my.db')
+db = sqlite3.connect('server.db')
 sql = db.cursor()
+sql.execute("""CREATE TABLE IF NOT EXISTS users (
+            login TEXT,
+            password TEXT,
+            balance BIGINT,
+            is_collector BOOLEAN            
+            )""")
+db.commit()
+
+USERS = [
+    ('Den', 'FRt%^%56', 1000, False),
+    ('Valerii', '1234%%55', 1000, False),
+    ('admin', 'admin', 10000, True)
+]
+sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
+db.commit()
 
 
 def add_users(my_login1, my_password1):
