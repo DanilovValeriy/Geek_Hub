@@ -49,6 +49,17 @@ sql = db.cursor()
 # ]
 # sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
 # db.commit()
+#
+# sql.execute("""CREATE TABLE IF NOT EXISTS bankomat (
+#             denomination INT,
+#             number INT
+#             )""")
+# db.commit()
+#
+# BANKOMAT = [(10, 10), (20, 10), (50, 10), (100, 10), (200, 10), (500, 10), (1000, 10)]
+#
+# sql.executemany("INSERT INTO bankomat VALUES (?, ?)", BANKOMAT)
+# db.commit()
 
 
 def logging(my_login, my_action):
@@ -96,7 +107,7 @@ def look_balance(my_login):
 
 
 def cash_in_the_bankomat():
-    return look_balance('bankomat')
+    pass
 
 
 def check_number(number):
@@ -223,5 +234,4 @@ def start(login):
             print(err)
             return None
 
-
-login_or_create()
+# login_or_create()
