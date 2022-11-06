@@ -34,7 +34,7 @@ sql = db.cursor()
 #             is_collector BOOLEAN
 #             )""")
 # db.commit()
-
+#
 # USERS = [
 #     ('Den', 'FRt%^%56', 1000, False),
 #     ('Valerii', '1234%%55', 1000, False),
@@ -83,6 +83,10 @@ def look_balance(my_login):
             return el[1]
 
 
+def cash_in_the_bankomat():
+    return look_balance('bankomat')
+
+
 def check_number(number):
     try:
         number = float(number)
@@ -90,7 +94,7 @@ def check_number(number):
             print('The sum can not be less zero')
             return False
         else:
-            return number
+            return float(number)
     except ValueError as err:
         print(err)
         return False
@@ -102,67 +106,18 @@ def change_balance(my_login, number, oper='+'):
     else:
         balance = look_balance(my_login)
         if oper == '+':
-            sql.execute(f"UPDATE users set balance =? where login =?", (balance + number, my_login))
+            sql.execute(f"UPDATE users set balance =? where login =?", (float(balance) + float(number), my_login))
             db.commit()
             print(f'Your account has been topped up. The amount on the account is {look_balance(my_login)}')
         else:
-            if number > balance:
+            if float(number) > float(balance):
                 print('There are not enough funds in your account to complete the transaction')
                 return None
             else:
-                sql.execute(f"UPDATE users set balance =? where login =?", (balance - number, my_login))
+                sql.execute(f"UPDATE users set balance =? where login =?", (float(balance) - float(number), my_login))
                 db.commit()
-                print(f'You have withdrawn {number}. The amount in the account is {look_balance(my_login)}')
-
-
-def start(login):
-    print(f'Hi, {login}')
-    choice = 0
-    while choice != 4:
-        try:
-            choice = int(input('Choice operation\n1. Look at the balance\n2. Top up the balance\n'
-                               '3. Take the money\n4. Exit\n'))
-            match choice:
-                case 1:
-                    my_logger(u_name, {"Action": "Show balance"})
-                    print(show_balance(u_name))
-
-                case 2:
-                    try:
-                        my_sum = float(input('How much money do you want to put into the account?\n'))
-                        if my_sum < 0:
-                            print("You can't put less than zero")
-                            my_logger(u_name, {"Action": "You can't put less than zero"})
-                            continue
-                        message = f"Your balance successful updated. {change_balance(u_name, my_sum, '+')}"
-                        my_logger(u_name, {"Action": message})
-                        print(message)
-                    except ValueError as err:
-                        print(err)
-
-                case 3:
-                    try:
-                        my_sum = float(input('how much money you want to withdraw from the account?\n'))
-                        if my_sum < 0:
-                            print("You can't put less than zero")
-                            my_logger(u_name, {"Action": "You can't put less than zero"})
-                            continue
-                        elif check_score(u_name, my_sum):
-                            message = f"Your balance successful updated. {change_balance(u_name, my_sum, '-')}"
-                            my_logger(u_name, {"Action": message})
-                            print(message)
-                        else:
-                            print('There are not enough funds in the account')
-                            my_logger(u_name, {"Action": "There are not enough funds in the account"})
-                    except ValueError as err:
-                        print(err)
-
-                case 4:
-                    print('Have a nice day. Good bye')
-
-        except ValueError as err:
-            print(err)
-            return None
+                if my_login != 'bankomat':
+                    print(f'You have withdrawn {number}. The amount in the account is {look_balance(my_login)}')
 
 
 def login_or_create():
@@ -211,52 +166,42 @@ def start(login):
     while choice != 4:
         try:
             choice = int(input('Choice operation\n1. Look at the balance\n2. Top up the balance\n'
-                               '3. Take the money\n4. Exit\n'))
+                               '3. Take the money\n4. Exit\n5. Top up the balance ATM (admin only)\n'))
             match choice:
                 case 1:
-                    my_logger(u_name, {"Action": "Show balance"})
-                    print(show_balance(u_name))
+                    print(look_balance(login))
 
                 case 2:
-                    try:
-                        my_sum = float(input('How much money do you want to put into the account?\n'))
-                        if my_sum < 0:
-                            print("You can't put less than zero")
-                            my_logger(u_name, {"Action": "You can't put less than zero"})
-                            continue
-                        message = f"Your balance successful updated. {change_balance(u_name, my_sum, '+')}"
-                        my_logger(u_name, {"Action": message})
-                        print(message)
-                    except ValueError as err:
-                        print(err)
+                    number = input('How much you want to top up the account?\n')
+                    if not check_number(number):
+                        continue
+                    else:
+                        change_balance(login, number, '+')
 
                 case 3:
-                    try:
-                        my_sum = float(input('how much money you want to withdraw from the account?\n'))
-                        if my_sum < 0:
-                            print("You can't put less than zero")
-                            my_logger(u_name, {"Action": "You can't put less than zero"})
-                            continue
-                        elif check_score(u_name, my_sum):
-                            message = f"Your balance successful updated. {change_balance(u_name, my_sum, '-')}"
-                            my_logger(u_name, {"Action": message})
-                            print(message)
-                        else:
-                            print('There are not enough funds in the account')
-                            my_logger(u_name, {"Action": "There are not enough funds in the account"})
-                    except ValueError as err:
-                        print(err)
+                    number = input('how much money you want to withdraw from the account?\n')
+                    if not check_number(number):
+                        continue
+                    elif cash_in_the_bankomat() > float(number):
+                        change_balance(login, number, '-')
+                        change_balance('bankomat', float(number), '-')
+                    else:
+                        print('There are not enough funds in the ATM')
 
                 case 4:
                     print('Have a nice day. Good bye')
+
+                case 5:
+                    if login == 'admin':
+                        number = input('How much you want to top up the ATM?\n')
+                        if not check_number(number):
+                            print('Ha-ha-ha/ Very funny. I suppose you are seriously man')
+                        else:
+                            change_balance('bankomat', float(number), '+')
 
         except ValueError as err:
             print(err)
             return None
 
-# login_or_create()
 
-# 1. Look at the balance
-# 2. Top up the balance
-# 3. Take the money
-# 4. Exit
+login_or_create()
