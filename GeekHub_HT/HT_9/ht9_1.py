@@ -107,7 +107,14 @@ def look_balance(my_login):
 
 
 def cash_in_the_bankomat():
-    pass
+    sql.execute("SELECT denomination, number FROM bankomat")
+    my_sum = 0
+    for el in sql.fetchall():
+        my_sum += el[0] * el[1]
+    return my_sum
+
+
+print(cash_in_the_bankomat())
 
 
 def check_number(number):
