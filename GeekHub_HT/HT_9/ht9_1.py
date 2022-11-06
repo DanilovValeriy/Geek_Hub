@@ -181,14 +181,24 @@ def change_bankomat_cash():
         print(f'For denomination {nominal} what operation do you want?')
         operation = choose_operation()
         if operation == '+':
-            # old_number = sql.execute("SELECT number FROM bankomat WHERE denomination =?", nominal)
             my_number = my_input()
             sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
                         (old_number + float(my_number), nominal))
             db.commit()
+            logging('admin', f'Put on the ATM denomination - {nominal}, number - {my_number}')
+        else:
+            my_number = my_input()
+            while my_number > old_number:
+                print('There are not enough bills of this denomination')
+                logging('admin', 'There are not enough bills of this denomination')
+                my_number = my_input()
+            sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
+                        (old_number - float(my_number), nominal))
+            db.commit()
+            logging('admin', f'Admin took the money from ATM denomination - {nominal}, number - {my_number}')
 
 
-change_bankomat_cash()
+# change_bankomat_cash()
 
 
 def login_or_create():
@@ -267,15 +277,11 @@ def start(login):
 
                 case 5:
                     if login == 'admin':
-                        number = input('How much you want to top up the ATM?\n')
-                        if not check_number(number):
-                            print('Ha-ha-ha/ Very funny. I suppose you are seriously man')
-                            logging(login, 'will fire this worker')
-                        else:
-                            pass
-                            # change_balance('bankomat', float(number), '+')
-                            #
-
+                        change_bankomat_cash()
+                        # number = input('How much you want to top up the ATM?\n')
+                        # if not check_number(number):
+                        #     print('Ha-ha-ha/ Very funny. I suppose you are seriously man')
+                        #     logging(login, 'will fire this worker')
                     else:
                         print('You do not have access to this operation')
                         logging(login, 'Access denied')
