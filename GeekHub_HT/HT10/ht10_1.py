@@ -26,7 +26,6 @@ import sqlite3
 db = sqlite3.connect('server.db')
 sql = db.cursor()
 
-
 # sql.execute("""CREATE TABLE IF NOT EXISTS users (
 #             login TEXT,
 #             password TEXT,
@@ -35,26 +34,23 @@ sql = db.cursor()
 #             )""")
 # db.commit()
 #
-# sql.execute("""CREATE TABLE IF NOT EXISTS transactions (
-#             login TEXT,
-#             action TEXT
-#             )""")
-# db.commit()
-#
 # USERS = [
 #     ('Den', 'FRt%^%56', 1000, False),
 #     ('Valerii', '1234%%55', 1000, False),
 #     ('admin', 'admin', 10000, True),
-#     ('bankomat', 'bJ%f$$^vBJD55^&$%6', 1000, False)
+#     # ('bankomat', 'bJ%f$$^vBJD55^&$%6', 1000, False)
 # ]
 # sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
 # db.commit()
 
 
-def logging(my_login, my_action):
-    sql.execute(f"INSERT INTO transactions (login, action) VALUES (?, ?)",
-                (my_login, my_action))
-    db.commit()
+sql.execute("""CREATE TABLE IF NOT EXISTS bankomat (
+            denomination INT
+            number INT
+            )""")
+db.commit()
+
+BANKOMAT = []
 
 
 def add_users(my_login1, my_password1):
@@ -121,20 +117,15 @@ def change_balance(my_login, number, oper='+'):
             sql.execute(f"UPDATE users set balance =? where login =?", (float(balance) + float(number), my_login))
             db.commit()
             print(f'Your account has been topped up. The amount on the account is {look_balance(my_login)}')
-            logging(my_login, f'Your account has been topped up. The amount on the account is {look_balance(my_login)}')
-
         else:
             if float(number) > float(balance):
                 print('There are not enough funds in your account to complete the transaction')
-                logging(my_login, 'There are not enough funds in your account to complete the transaction')
                 return None
             else:
                 sql.execute(f"UPDATE users set balance =? where login =?", (float(balance) - float(number), my_login))
                 db.commit()
                 if my_login != 'bankomat':
                     print(f'You have withdrawn {number}. The amount in the account is {look_balance(my_login)}')
-                    logging(my_login,
-                            f'You have withdrawn {number}. The amount in the account is {look_balance(my_login)}')
 
 
 def login_or_create():
@@ -187,7 +178,6 @@ def start(login):
             match choice:
                 case 1:
                     print(look_balance(login))
-                    logging(login, 'Look at the balance')
 
                 case 2:
                     number = input('How much you want to top up the account?\n')
@@ -205,11 +195,9 @@ def start(login):
                         change_balance('bankomat', float(number), '-')
                     else:
                         print('There are not enough funds in the ATM')
-                        logging(login, 'There are not enough funds in the ATM')
 
                 case 4:
                     print('Have a nice day. Good bye')
-                    logging(login, 'the end of working with an ATM')
 
                 case 5:
                     if login == 'admin':
@@ -223,5 +211,4 @@ def start(login):
             print(err)
             return None
 
-
-login_or_create()
+# login_or_create()
