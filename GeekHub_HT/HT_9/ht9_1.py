@@ -114,9 +114,6 @@ def cash_in_the_bankomat():
     return my_sum
 
 
-print(cash_in_the_bankomat())
-
-
 def check_number(number):
     try:
         number = float(number)
@@ -153,6 +150,45 @@ def change_balance(my_login, number, oper='+'):
                     print(f'You have withdrawn {number}. The amount in the account is {look_balance(my_login)}')
                     logging(my_login,
                             f'You have withdrawn {number}. The amount in the account is {look_balance(my_login)}')
+
+
+def my_input():
+    flag = True
+    while flag:
+        number = input('Input number bigger than zero\n')
+        try:
+            number = float(number)
+            if number > 0:
+                return number
+            else:
+                continue
+        except ValueError as err:
+            print(err)
+
+
+def choose_operation():
+    oper = input("Choose operation '+' or '-': ")
+    while oper not in {'+', '-'}:
+        oper = input("Choose operation '+' or '-': ")
+    return oper
+
+
+def change_bankomat_cash():
+    DENOMINATION = [10, 20, 50, 100, 200, 500, 1000]
+    for nominal in DENOMINATION:
+        sql.execute(f"SELECT number FROM bankomat WHERE denomination = {nominal}")
+        old_number = sql.fetchone()[0]
+        print(f'For denomination {nominal} what operation do you want?')
+        operation = choose_operation()
+        if operation == '+':
+            # old_number = sql.execute("SELECT number FROM bankomat WHERE denomination =?", nominal)
+            my_number = my_input()
+            sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
+                        (old_number + float(my_number), nominal))
+            db.commit()
+
+
+change_bankomat_cash()
 
 
 def login_or_create():
@@ -234,8 +270,16 @@ def start(login):
                         number = input('How much you want to top up the ATM?\n')
                         if not check_number(number):
                             print('Ha-ha-ha/ Very funny. I suppose you are seriously man')
+                            logging(login, 'will fire this worker')
                         else:
-                            change_balance('bankomat', float(number), '+')
+                            pass
+                            # change_balance('bankomat', float(number), '+')
+                            #
+
+                    else:
+                        print('You do not have access to this operation')
+                        logging(login, 'Access denied')
+
 
         except ValueError as err:
             print(err)
