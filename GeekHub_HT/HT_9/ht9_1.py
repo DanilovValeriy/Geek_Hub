@@ -198,9 +198,6 @@ def change_bankomat_cash():
             logging('admin', f'Admin took the money from ATM denomination - {nominal}, number - {my_number}')
 
 
-# change_bankomat_cash()
-
-
 def login_or_create():
     flag = True
     while flag:
@@ -258,15 +255,17 @@ def start(login):
                     if not check_number(number):
                         continue
                     else:
-                        change_balance(login, number, '+')
+                        change_balance(login, (float(number) // 10) * 10, '+')
+                        print(f'your chang = {float(number) % 10}')
 
                 case 3:
                     number = input('how much money you want to withdraw from the account?\n')
                     if not check_number(number):
                         continue
                     elif cash_in_the_bankomat() > float(number):
-                        change_balance(login, number, '-')
-                        change_balance('bankomat', float(number), '-')
+                        change_balance(login, (float(number) // 10) * 10, '-')
+                        print(f'your chang = {float(number) % 10}')
+
                     else:
                         print('There are not enough funds in the ATM')
                         logging(login, 'There are not enough funds in the ATM')
@@ -278,10 +277,6 @@ def start(login):
                 case 5:
                     if login == 'admin':
                         change_bankomat_cash()
-                        # number = input('How much you want to top up the ATM?\n')
-                        # if not check_number(number):
-                        #     print('Ha-ha-ha/ Very funny. I suppose you are seriously man')
-                        #     logging(login, 'will fire this worker')
                     else:
                         print('You do not have access to this operation')
                         logging(login, 'Access denied')
