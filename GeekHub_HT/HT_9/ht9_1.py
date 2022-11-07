@@ -186,6 +186,7 @@ def change_bankomat_cash():
         operation = choose_operation()
         if operation == '+':
             my_number = my_input()
+            print(f'ATM has {old_number} of {nominal}')
             sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
                         (old_number + float(my_number), nominal))
             db.commit()
@@ -193,6 +194,7 @@ def change_bankomat_cash():
             logging('admin', f'Put on the ATM denomination - {nominal}, number - {my_number}')
         else:
             my_number = my_input()
+            print(f'ATM has {old_number} of {nominal}')
             while my_number > old_number:
                 print(f'There are not enough bills of this denomination. ATM contains {old_number} numbers')
                 logging('admin', 'There are not enough bills of this denomination')
