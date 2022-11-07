@@ -116,12 +116,12 @@ def cash_in_the_bankomat():
 
 def check_number(number):
     try:
-        number = float(number)
+        number = int(number)
         if number < 0:
             print('The sum can not be less zero')
             return False
         else:
-            return float(number)
+            return int(number)
     except ValueError as err:
         print(err)
         return False
@@ -133,18 +133,18 @@ def change_balance(my_login, number, oper='+'):
     else:
         balance = look_balance(my_login)
         if oper == '+':
-            sql.execute(f"UPDATE users set balance =? where login =?", (float(balance) + float(number), my_login))
+            sql.execute(f"UPDATE users set balance =? where login =?", (int(balance) + int(number), my_login))
             db.commit()
             print(f'Your account has been topped up. The amount on the account is {look_balance(my_login)}')
             logging(my_login, f'Your account has been topped up. The amount on the account is {look_balance(my_login)}')
 
         else:
-            if float(number) > float(balance):
+            if int(number) > int(balance):
                 print('There are not enough funds in your account to complete the transaction')
                 logging(my_login, 'There are not enough funds in your account to complete the transaction')
                 return None
             else:
-                sql.execute(f"UPDATE users set balance =? where login =?", (float(balance) - float(number), my_login))
+                sql.execute(f"UPDATE users set balance =? where login =?", (int(balance) - int(number), my_login))
                 db.commit()
                 if my_login != 'bankomat':
                     print(f'You have withdrawn {number}. The amount in the account is {look_balance(my_login)}')
@@ -157,7 +157,7 @@ def my_input():
     while flag:
         number = input('Input number bigger than zero\n')
         try:
-            number = float(number)
+            number = int(number)
             if number > 0:
                 return number
             else:
@@ -188,9 +188,9 @@ def change_bankomat_cash():
             my_number = my_input()
             print(f'ATM has {old_number} of {nominal}')
             sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
-                        (old_number + float(my_number), nominal))
+                        (old_number + int(my_number), nominal))
             db.commit()
-            print(f'ATM have {old_number + float(my_number)} of {nominal}')
+            print(f'ATM have {old_number + int(my_number)} of {nominal}')
             logging('admin', f'Put on the ATM denomination - {nominal}, number - {my_number}')
         else:
             my_number = my_input()
@@ -200,9 +200,9 @@ def change_bankomat_cash():
                 logging('admin', 'There are not enough bills of this denomination')
                 my_number = my_input()
             sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
-                        (old_number - float(my_number), nominal))
+                        (old_number - int(my_number), nominal))
             db.commit()
-            print(f'ATM have {old_number - float(my_number)} of {nominal}')
+            print(f'ATM have {old_number - int(my_number)} of {nominal}')
             logging('admin', f'Admin took the money from ATM denomination - {nominal}, number - {my_number}')
 
 
@@ -263,16 +263,16 @@ def start(login):
                     if not check_number(number):
                         continue
                     else:
-                        change_balance(login, (float(number) // 10) * 10, '+')
-                        print(f'your chang = {float(number) % 10}')
+                        change_balance(login, (int(number) // 10) * 10, '+')
+                        print(f'your chang = {int(number) % 10}')
 
                 case 3:
                     number = input('how much money you want to withdraw from the account?\n')
                     if not check_number(number):
                         continue
-                    elif cash_in_the_bankomat() > float(number):
-                        change_balance(login, (float(number) // 10) * 10, '-')
-                        print(f'your chang = {float(number) % 10}')
+                    elif cash_in_the_bankomat() > int(number):
+                        change_balance(login, (int(number) // 10) * 10, '-')
+                        print(f'your chang = {int(number) % 10}')
 
                     else:
                         print('There are not enough funds in the ATM')
