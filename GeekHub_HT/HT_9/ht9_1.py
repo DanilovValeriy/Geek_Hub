@@ -244,7 +244,7 @@ def start(login):
     while choice != 4:
         try:
             choice = int(input('Choice operation\n1. Look at the balance\n2. Top up the balance\n'
-                               '3. Take the money\n4. Exit\n5. Top up the balance ATM (admin only)\n'))
+                               '3. Take the money\n4. Exit\n5. Working with an ATM (admin only)\n'))
             match choice:
                 case 1:
                     print(look_balance(login))
@@ -276,7 +276,15 @@ def start(login):
 
                 case 5:
                     if login == 'admin':
-                        change_bankomat_cash()
+                        print('Choose what do you want\n"+" looking the balance ATM\n"-" changing the balance ATM')
+                        operation = choose_operation()
+                        logging('admin', f"Choose {operation} operation")
+                        if operation == "-":
+                            change_bankomat_cash()
+                        else:
+                            sql.execute("SELECT denomination, number FROM bankomat")
+                            for el in sql.fetchall():
+                                print(f'There are {el[1]} bills of denomination {el[0]}')
                     else:
                         print('You do not have access to this operation')
                         logging(login, 'Access denied')
@@ -286,4 +294,5 @@ def start(login):
             print(err)
             return None
 
-# login_or_create()
+
+login_or_create()
