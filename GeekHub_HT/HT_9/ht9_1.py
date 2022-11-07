@@ -178,23 +178,29 @@ def change_bankomat_cash():
     for nominal in DENOMINATION:
         sql.execute(f"SELECT number FROM bankomat WHERE denomination = {nominal}")
         old_number = sql.fetchone()[0]
-        print(f'For denomination {nominal} what operation do you want?')
+        g = input(f'Do you want working with {nominal}? y - changing balance, n - showing old balance: ')
+        if g in {'n', 'N'}:
+            print(f'ATM has {old_number} of {nominal}')
+            logging('admin', f'Looking ATM denomination - {nominal}, number - {old_number}')
+            continue
         operation = choose_operation()
         if operation == '+':
             my_number = my_input()
             sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
                         (old_number + float(my_number), nominal))
             db.commit()
+            print(f'ATM have {old_number + float(my_number)} of {nominal}')
             logging('admin', f'Put on the ATM denomination - {nominal}, number - {my_number}')
         else:
             my_number = my_input()
             while my_number > old_number:
-                print('There are not enough bills of this denomination')
+                print(f'There are not enough bills of this denomination. ATM contains {old_number} numbers')
                 logging('admin', 'There are not enough bills of this denomination')
                 my_number = my_input()
             sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
                         (old_number - float(my_number), nominal))
             db.commit()
+            print(f'ATM have {old_number - float(my_number)} of {nominal}')
             logging('admin', f'Admin took the money from ATM denomination - {nominal}, number - {my_number}')
 
 
@@ -227,7 +233,7 @@ def login_or_create():
                     else:
                         iter = 1
                         while iter < 4:
-                            my_password = input("Input password more than 5 letters, consider one of '!@#$%^&' "
+                            my_password = input("Input password more than 5 letters, contains one of '!@#$%^&' "
                                                 "simbols: ")
                             if check_password(my_password):
                                 add_users(my_login, my_password)
