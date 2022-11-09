@@ -72,6 +72,7 @@ def add_users(my_login1, my_password1):
     sql.execute(f"INSERT INTO users (login, password, balance, is_collector) VALUES (?, ?, ?, ?)",
                 (my_login1, my_password1, 0, False))
     db.commit()
+    logging(my_login1, f'{my_login1} create the account')
 
 
 def is_login_allowed(my_login):
@@ -116,12 +117,12 @@ def cash_in_the_bankomat():
 
 def check_number(number):
     try:
-        number = float(number)
+        number = int(number)
         if number < 0:
             print('The sum can not be less zero')
             return False
         else:
-            return float(number)
+            return int(number)
     except ValueError as err:
         print(err)
         return False
@@ -133,18 +134,18 @@ def change_balance(my_login, number, oper='+'):
     else:
         balance = look_balance(my_login)
         if oper == '+':
-            sql.execute(f"UPDATE users set balance =? where login =?", (float(balance) + float(number), my_login))
+            sql.execute(f"UPDATE users set balance =? where login =?", (int(balance) + int(number), my_login))
             db.commit()
             print(f'Your account has been topped up. The amount on the account is {look_balance(my_login)}')
             logging(my_login, f'Your account has been topped up. The amount on the account is {look_balance(my_login)}')
 
         else:
-            if float(number) > float(balance):
+            if int(number) > int(balance):
                 print('There are not enough funds in your account to complete the transaction')
                 logging(my_login, 'There are not enough funds in your account to complete the transaction')
                 return None
             else:
-                sql.execute(f"UPDATE users set balance =? where login =?", (float(balance) - float(number), my_login))
+                sql.execute(f"UPDATE users set balance =? where login =?", (int(balance) - int(number), my_login))
                 db.commit()
                 if my_login != 'bankomat':
                     print(f'You have withdrawn {number}. The amount in the account is {look_balance(my_login)}')
@@ -157,7 +158,7 @@ def my_input():
     while flag:
         number = input('Input number bigger than zero\n')
         try:
-            number = float(number)
+            number = int(number)
             if number > 0:
                 return number
             else:
@@ -188,9 +189,9 @@ def change_bankomat_cash():
             my_number = my_input()
             print(f'ATM has {old_number} of {nominal}')
             sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
-                        (old_number + float(my_number), nominal))
+                        (old_number + int(my_number), nominal))
             db.commit()
-            print(f'ATM have {old_number + float(my_number)} of {nominal}')
+            print(f'ATM have {old_number + int(my_number)} of {nominal}')
             logging('admin', f'Put on the ATM denomination - {nominal}, number - {my_number}')
         else:
             my_number = my_input()
@@ -200,10 +201,19 @@ def change_bankomat_cash():
                 logging('admin', 'There are not enough bills of this denomination')
                 my_number = my_input()
             sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
-                        (old_number - float(my_number), nominal))
+                        (old_number - int(my_number), nominal))
             db.commit()
-            print(f'ATM have {old_number - float(my_number)} of {nominal}')
+            print(f'ATM have {old_number - int(my_number)} of {nominal}')
             logging('admin', f'Admin took the money from ATM denomination - {nominal}, number - {my_number}')
+
+
+def history_of_logging(login):
+    sql.execute(f"SELECT login, action FROM transactions")
+    for el in sql.fetchall():
+        if login == 'admin':
+            print(f'{el[0]} has operation {el[1]}')
+        elif el[0] == login:
+            print(el[1])
 
 
 def login_or_create():
@@ -246,61 +256,99 @@ def login_or_create():
                                 start(my_login)
 
 
+def denomination_in_atm():
+    sql.execute("SELECT denomination, number FROM bankomat")
+    for el in sql.fetchall():
+        print(f'Denomination {el[0]} has {el[1]}')
+
+
 def start(login):
-    print(f'Hi, {login}')
-    choice = 0
-    while choice != 4:
-        try:
-            choice = int(input('Choice operation\n1. Look at the balance\n2. Top up the balance\n'
-                               '3. Take the money\n4. Exit\n5. Working with an ATM (admin only)\n'))
-            match choice:
-                case 1:
-                    print(look_balance(login))
-                    logging(login, 'Look at the balance')
+    if login != 'admin':
+        print(f'Hi, {login}')
+        choice = 0
+        while choice != 6:
+            try:
+                choice = int(input('Choice operation\n1. Look at the balance\n2. Top up the balance\n'
+                                   '3. Take the money\n4. View transaction history.\n5. Return to start menu\n6. '
+                                   'Exit\n'))
+                match choice:
+                    case 1:
+                        print(look_balance(login))
+                        logging(login, 'Look at the balance')
 
-                case 2:
-                    number = input('How much you want to top up the account?\n')
-                    if not check_number(number):
-                        continue
-                    else:
-                        change_balance(login, (float(number) // 10) * 10, '+')
-                        print(f'your chang = {float(number) % 10}')
-
-                case 3:
-                    number = input('how much money you want to withdraw from the account?\n')
-                    if not check_number(number):
-                        continue
-                    elif cash_in_the_bankomat() > float(number):
-                        change_balance(login, (float(number) // 10) * 10, '-')
-                        print(f'your chang = {float(number) % 10}')
-
-                    else:
-                        print('There are not enough funds in the ATM')
-                        logging(login, 'There are not enough funds in the ATM')
-
-                case 4:
-                    print('Have a nice day. Good bye')
-                    logging(login, 'the end of working with an ATM')
-
-                case 5:
-                    if login == 'admin':
-                        print('Choose what do you want\n"+" looking the balance ATM\n"-" changing the balance ATM')
-                        operation = choose_operation()
-                        logging('admin', f"Choose {operation} operation")
-                        if operation == "-":
-                            change_bankomat_cash()
+                    case 2:
+                        number = input('How much you want to top up the account?\n')
+                        if not check_number(number):
+                            continue
                         else:
-                            sql.execute("SELECT denomination, number FROM bankomat")
-                            for el in sql.fetchall():
-                                print(f'There are {el[1]} bills of denomination {el[0]}')
-                    else:
-                        print('You do not have access to this operation')
-                        logging(login, 'Access denied')
+                            change_balance(login, (int(number) // 10) * 10, '+')
+                            print(f'your chang = {int(number) % 10}')
+
+                    case 3:
+                        number = input('how much money you want to withdraw from the account?\n')
+                        if not check_number(number):
+                            continue
+                        elif cash_in_the_bankomat() > int(number):
+                            change_balance(login, (int(number) // 10) * 10, '-')
+                            print(f'your chang = {int(number) % 10}')
+
+                        else:
+                            print('There are not enough funds in the ATM')
+                            logging(login, 'There are not enough funds in the ATM')
+
+                    case 4:
+                        history_of_logging(login)
+                        logging(login, "View transaction history")
+
+                    case 6:
+                        print('Have a nice day. Good bye')
+                        logging(login, 'the end of working with an ATM')
+
+                    case 5:
+                        login_or_create()
+                        logging(login, 'Return to start menu')
+
+            except ValueError as err:
+                print(err)
+                return None
+    else:
+        print('Hello, Big Boss! Make your choice')
+        choice = 0
+        while choice != 5:
+            try:
+                choice = int(input('Choice operation\n1. Denomination and balance ATM\n2. Change the balance ATM\n'
+                                   '3. History of using ATM\n4. Return to start menu.\n5. Exit\n'))
+
+                match choice:
+                    case 1:
+                        print(f'Balance of the ATM {cash_in_the_bankomat()}')
+                        denomination_in_atm()
+                        logging('admin', 'Big boss looking the balance an ATM')
+                    case 2:
+                        change_bankomat_cash()
+
+                    case 3:
+                        history_of_logging('admin')
+
+                    case 4:
+                        login_or_create()
+
+            except ValueError as err:
+                print(err)
 
 
-        except ValueError as err:
-            print(err)
-            return None
+def simple_decomposition(number):
+    sql.execute("SELECT denomination, number FROM bankomat")
+    atm_list = sql.fetchall()
+    index = 0
+    my_list = []
+    for el in atm_list:
+        if number // el[0] > atm_list[index][1]:
+            my_list.append(atm_list[index][1])
+            number -= atm_list[index][1] * el[0]
+        else:
+            my_list.append(number // el[0])
+            number %= el[0]
+    return my_list
 
-
-login_or_create()
+# login_or_create()
