@@ -265,6 +265,21 @@ def denomination_in_atm(f_print=True):
     return val
 
 
+def withdraw_from_atm(login, my_list):
+    DENOMINATION = [1000, 500, 200, 100, 50, 20, 10]
+    index = 0
+    for nominal in DENOMINATION:
+        sql.execute(f"SELECT number FROM bankomat WHERE denomination = {nominal}")
+        new_nominal = my_list[index] + sql.fetchone()[0]
+        if my_list[index]:
+            print(f'You take {sql.fetchone()[0]} of {nominal}')
+            logging(login, f'You take {sql.fetchone()[0]} of {nominal}')
+        index += 1
+        sql.execute(f"UPDATE bankomat SET number =? where denomination =?", (new_nominal, nominal))
+        # logging()
+        db.commit()
+
+
 def start(login):
     if login != 'admin':
         print(f'Hi, {login}')
@@ -292,7 +307,7 @@ def start(login):
                         if not check_number(number):
                             continue
                         elif cash_in_the_bankomat() > int(number):
-                            change_balance(login, (int(number) // 10) * 10, '-')
+                            withdraw_from_atm(login, decomposition((int(number) // 10) * 10))
                             print(f'your chang = {int(number) % 10}')
 
                         else:
