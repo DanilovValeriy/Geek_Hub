@@ -349,6 +349,21 @@ def simple_decomposition(number):
         else:
             my_list.append(number // el[0])
             number %= el[0]
+        index += 1
     return my_list
 
+
+def composition(my_list):
+    D = [1000, 500, 200, 100, 50, 20, 10]
+    my_sum = 0
+    for el in zip(D, my_list):
+        my_sum += el[0] * el[1]
+    return my_sum
+
+
+v = simple_decomposition(4010)
+print(composition(v))
+s = simple_decomposition(110)
+print(composition(s))
+# print(simple_decomposition(4010))
 # login_or_create()
