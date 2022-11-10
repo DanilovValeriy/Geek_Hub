@@ -1,5 +1,6 @@
-DEN = [(1000, 3), (500, 1), (200, 4), (100, 0), (50, 1), (20, 1), (10, 5)]
+DEN = [(1000, 0), (500, 1), (200, 4), (100, 0), (50, 5), (20, 5), (10, 0)]
 D = [1000, 500, 200, 100, 50, 20, 10]
+D1 = [1000, 500, 200, 100, 50, 20, 10]
 
 
 def not_simple_decomposition(number, my_nominal):
@@ -45,6 +46,7 @@ def decomposition(number, D, DEN):
             nom_list.pop(0)
         else:
             finnaly_list.append(copy_simple_dec.pop(0))
+            nom_list.pop(0)
             try:
                 arr_inside.pop(0)
             except IndexError as err:
@@ -52,5 +54,9 @@ def decomposition(number, D, DEN):
                 return None
 
 
-s = decomposition(2175, D, DEN)
-print(s)
+s = decomposition(1170, D1, DEN)
+# v = decomposition(110, D1, DEN)
+# print('1170 =', s)
+# print('110 =', v)
+
+# print(composition(s, D1))
