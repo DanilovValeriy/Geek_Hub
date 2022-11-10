@@ -1,8 +1,10 @@
-DEN = [(1000, 0), (500, 1), (200, 4), (100, 0), (50, 5), (20, 5), (10, 0)]
+DEN = [(1000, 5), (500, 1), (200, 5), (100, 4), (50, 0), (20, 3), (10, 3)]
 D = [1000, 500, 200, 100, 50, 20, 10]
 D1 = [1000, 500, 200, 100, 50, 20, 10]
 
 
+# {(10, 3), (20, 3), (50, 0), (100, 4), (200, 5), (500, 1), (1000, 5)} сума 3990
+# повинно 3x1000, 1x500, 2x200, 3x20, 3x10 = 3990
 def not_simple_decomposition(number, my_nominal):
     index = 0
     my_list = []
@@ -26,10 +28,14 @@ def composition(my_list, nominal_list):
 
 
 def decomposition(number, D, DEN):
-    arr_inside = D
+    # if number > cash_in_the_bankomat():
+    #     print('There is not enough money in the ATM')
+    #     return None
+    number = (number // 10) * 10
+    arr_inside = D[:]
     finnaly_list = []
     flag = True
-    nom_list = DEN
+    nom_list = DEN[:]
     while flag:
         copy_simple_dec = not_simple_decomposition(number, nom_list)
         if composition(copy_simple_dec, arr_inside) == number:
@@ -54,9 +60,4 @@ def decomposition(number, D, DEN):
                 return None
 
 
-s = decomposition(1170, D1, DEN)
-# v = decomposition(110, D1, DEN)
-# print('1170 =', s)
-# print('110 =', v)
-
-# print(composition(s, D1))
+print(decomposition(3990, D, DEN))

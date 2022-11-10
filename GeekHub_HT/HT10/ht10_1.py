@@ -26,6 +26,8 @@ import sqlite3
 db = sqlite3.connect('server.db')
 sql = db.cursor()
 
+D = [1000, 500, 200, 100, 50, 20, 10]
+
 
 # sql.execute("""CREATE TABLE IF NOT EXISTS users (
 #             login TEXT,
@@ -270,10 +272,11 @@ def withdraw_from_atm(login, my_list):
     index = 0
     for nominal in DENOMINATION:
         sql.execute(f"SELECT number FROM bankomat WHERE denomination = {nominal}")
-        new_nominal = my_list[index] + sql.fetchone()[0]
+        old_nominal = sql.fetchone()[0]
+        new_nominal = my_list[index] - old_nominal
         if my_list[index]:
-            print(f'You take {sql.fetchone()[0]} of {nominal}')
-            logging(login, f'You take {sql.fetchone()[0]} of {nominal}')
+            print(f'You take {my_list[index]} of {nominal}')
+            logging(login, f'You take {my_list[index]} of {nominal}')
         index += 1
         sql.execute(f"UPDATE bankomat SET number =? where denomination =?", (new_nominal, nominal))
         # logging()
@@ -307,8 +310,10 @@ def start(login):
                         if not check_number(number):
                             continue
                         elif cash_in_the_bankomat() > int(number):
-                            withdraw_from_atm(login, decomposition((int(number) // 10) * 10))
-                            print(f'your chang = {int(number) % 10}')
+                            chang = int(number) % 10
+                            number = (int(number) // 10) * 10
+                            withdraw_from_atm(login, decomposition(number, D, denomination_in_atm(False)))
+                            print(f'your chang = {chang}')
 
                         else:
                             print('There are not enough funds in the ATM')
@@ -410,10 +415,5 @@ def decomposition(number, D, DEN):
                 return None
 
 
-D = [1000, 500, 200, 100, 50, 20, 10]
-DEN = denomination_in_atm(False)
-# DEN = [(1000, 0), (500, 0), (200, 1), (100, 1), (50, 1), (20, 1), (10, 0)]
-print(DEN)
-
-print(decomposition(50811, D, DEN))
-# login_or_create()
+# print(decomposition())
+login_or_create()
