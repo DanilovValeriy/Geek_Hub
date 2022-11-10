@@ -313,7 +313,9 @@ def start(login):
                             chang = int(number) % 10
                             number = (int(number) // 10) * 10
                             withdraw_from_atm(login, decomposition(number, D, denomination_in_atm(False)))
+
                             print(f'your chang = {chang}')
+                            change_balance(login, int(number), '-')
 
                         else:
                             print('There are not enough funds in the ATM')
