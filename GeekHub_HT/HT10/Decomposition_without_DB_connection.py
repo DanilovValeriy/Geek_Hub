@@ -68,12 +68,11 @@ def checking_correctness_amount(number, decomposite_list):
 
 
 def result_of_decomposition(number):
-    decomposite_list = decomposition(1170, denomination_of_banknotes, cash_in_terminal)
+    decomposite_list = decomposition(number, denomination_of_banknotes, cash_in_terminal)
     if checking_correctness_amount(number, decomposite_list):
         return decomposite_list
     else:
         return "Can't withdraw this sum"
 
 
-
-my_print(result_of_decomposition(1170))
+my_print(result_of_decomposition(110))
