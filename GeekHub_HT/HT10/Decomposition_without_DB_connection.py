@@ -1,5 +1,5 @@
 # cash in terminal
-DEN = [(1000, 5), (500, 1), (200, 2), (100, 0), (50, 1), (20, 3), (10, 0)]
+DEN = [(1000, 5), (500, 1), (200, 4), (100, 0), (50, 1), (20, 3), (10, 0)]
 
 # denomination of banknotes
 D = [1000, 500, 200, 100, 50, 20, 10]
@@ -68,17 +68,19 @@ def checking_correctness_amount(number, decomposite_list):
     return number == composition(decomposite_list, D)
 
 
-def result_of_decomposition(number, decomposite_list):
+def result_of_decomposition(number):
+    decomposite_list = decomposition(1170, D, DEN)
     if checking_correctness_amount(number, decomposite_list):
         pass
-    #     run upset DB
+        return decomposite_list
     else:
         return "Can't withdraw this sum"
 
 
 """ Якщо є бажання потестувати на різні суми при різному кеші у терміналі, то треба змінити масив DEN. 
-Масив з назвами номіналу не треба змінювати"""
+Масив з назвами номіналу не треба змінювати. 
+Запускати треба result_of_decomposition"""
 
-v = decomposition(110, D, DEN)
-print(v)
-print(result_of_decomposition(110, v))
+# v = decomposition(1170, D, DEN)
+# print(v)
+print(result_of_decomposition(1170))
