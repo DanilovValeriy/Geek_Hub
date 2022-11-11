@@ -77,9 +77,7 @@ def result_of_decomposition(number):
         return "Can't withdraw this sum"
 
 
-""" Якщо є бажання потестувати на різні суми при різному кеші у терміналі, то треба змінити масив DEN. 
-Масив з назвами номіналу не треба змінювати. 
-Запускати треба result_of_decomposition"""
+""" Запускати треба result_of_decomposition. Суму вводити туди. """
 
 # v = decomposition(1170, D, DEN)
 # print(v)
