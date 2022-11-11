@@ -1,84 +1,79 @@
-# cash in terminal
-DEN = [(1000, 5), (500, 1), (200, 4), (100, 0), (50, 1), (20, 3), (10, 0)]
+cash_in_terminal = [(1000, 5), (500, 1), (200, 4), (100, 0), (50, 1), (20, 3), (10, 0)]
 
-# denomination of banknotes
-D = [1000, 500, 200, 100, 50, 20, 10]
-D1 = [1000, 500, 200, 100, 50, 20, 10]
+denomination_of_banknotes = [1000, 500, 200, 100, 50, 20, 10]
 
 
-# {(10, 3), (20, 3), (50, 0), (100, 4), (200, 5), (500, 1), (1000, 5)} сума 3990
-# повинно 3x1000, 1x500, 2x200, 3x20, 3x10 = 3990
-def not_simple_decomposition(number, my_nominal):
-    index = 0
-    my_list = []
-    for el in my_nominal:
-        if number // el[0] > my_nominal[index][1]:
-            my_list.append(my_nominal[index][1])
-            number -= my_nominal[index][1] * el[0]
+def my_print(my_list_of_decomposition):
+    if isinstance(my_list_of_decomposition, str):
+        print(str)
+        return None
+    denomination = [1000, 500, 200, 100, 50, 20, 10]
+    for index, number in enumerate(my_list_of_decomposition):
+        if number:
+            print(f'{denomination[index]} count {number}')
+    return None
+
+
+def simple_decomposition(number, cash_in_terminal_list):
+    resulting_list = []
+    for index, el in enumerate(cash_in_terminal_list):
+        if number // el[0] > cash_in_terminal_list[index][1]:
+            resulting_list.append(cash_in_terminal_list[index][1])
+            number -= cash_in_terminal_list[index][1] * el[0]
         else:
-            my_list.append(number // el[0])
+            resulting_list.append(number // el[0])
             number %= el[0]
-        index += 1
-    return my_list
+    return resulting_list
 
 
-def composition(my_list, nominal_list):
+def composition(my_decomposition_list, nominal_list):
     my_sum = 0
-    for el in zip(nominal_list, my_list):
-        # print(el)
+    for el in zip(nominal_list, my_decomposition_list):
         my_sum += el[0] * el[1]
     return my_sum
 
 
-def decomposition(number, D, DEN):
-    # if number > cash_in_the_bankomat():
-    #     print('There is not enough money in the ATM')
-    #     return None
-    starting_number = (number // 10) * 10
+def decomposition(number, denomination_of_banknotes, cash_in_terminal):
     number = (number // 10) * 10
-    arr_inside = D[:]
-    finnaly_list = []
+    list_of_denomination = denomination_of_banknotes[:]
+    resulting_list = []
     flag = True
-    nom_list = DEN[:]
+    cash_in_terminal_list = cash_in_terminal[:]
     while flag:
-        copy_simple_dec = not_simple_decomposition(number, nom_list)
-        if composition(copy_simple_dec, arr_inside) == number:
-            if not (finnaly_list):
-                return copy_simple_dec
+        list_from_simple_decomposition = simple_decomposition(number, cash_in_terminal_list)
+        if composition(list_from_simple_decomposition, list_of_denomination) == number:
+            if not resulting_list:
+                return list_from_simple_decomposition
             else:
-                return finnaly_list + copy_simple_dec
-        if len(copy_simple_dec) == 0:
-            return finnaly_list
-        elif copy_simple_dec[0] > 0:
-            finnaly_list.append(copy_simple_dec[0] - 1)
-            el = copy_simple_dec.pop(0)
-            number -= (el - 1) * arr_inside.pop(0)
-            nom_list.pop(0)
+                return resulting_list + list_from_simple_decomposition
+        if len(list_from_simple_decomposition) == 0:
+            return resulting_list
+        elif list_from_simple_decomposition[0] > 0:
+            resulting_list.append(list_from_simple_decomposition[0] - 1)
+            coefficient = list_from_simple_decomposition.pop(0)
+            number -= (coefficient - 1) * list_of_denomination.pop(0)
+            cash_in_terminal_list.pop(0)
         else:
-            finnaly_list.append(copy_simple_dec.pop(0))
-            nom_list.pop(0)
+            resulting_list.append(list_from_simple_decomposition.pop(0))
+            cash_in_terminal_list.pop(0)
             try:
-                arr_inside.pop(0)
-            except IndexError as err:
+                list_of_denomination.pop(0)
+            except IndexError:
                 print('The entered amount cannot be issued')
                 return None
 
 
 def checking_correctness_amount(number, decomposite_list):
-    return number == composition(decomposite_list, D)
+    return number == composition(decomposite_list, denomination_of_banknotes)
 
 
 def result_of_decomposition(number):
-    decomposite_list = decomposition(1170, D, DEN)
+    decomposite_list = decomposition(1170, denomination_of_banknotes, cash_in_terminal)
     if checking_correctness_amount(number, decomposite_list):
-        pass
         return decomposite_list
     else:
         return "Can't withdraw this sum"
 
 
-""" Запускати треба result_of_decomposition. Суму вводити туди. """
 
-# v = decomposition(1170, D, DEN)
-# print(v)
-print(result_of_decomposition(1170))
+my_print(result_of_decomposition(1170))
