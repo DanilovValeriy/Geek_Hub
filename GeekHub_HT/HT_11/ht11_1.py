@@ -17,36 +17,37 @@ https://realpython.com/documenting-python-code/ )'''
 
 
 class Calc:
+    """The class was created to calculate elementary arithmetic operations
+
+    Raises:
+        ZeroDivisionError: if in __truediv__ second argument == 0
+
+    Returns:
+        _type_: integer or float
+    """
     last_result = None
 
     def __init__(self, number):
+        """
+        number : float or int
+        number for arithmetic operation
+        """
         self.number = number
 
     def __add__(self, other):
-        last_result = self.number + other.number
+        Calc.last_result = self.number + other.number
         return self.number + other.number
 
     def __mul__(self, other):
-        last_result = self.number * other.number
+        Calc.last_result = self.number * other.number
         return self.number * other.number
 
     def __truediv__(self, other):
         if other.number == 0:
             raise ZeroDivisionError(f'Division by zero!')
-        last_result = self.number / other.number
+        Calc.last_result = self.number / other.number
         return self.number / other.number
 
     def __sub__(self, other):
-        last_result = self.number - other.number
+        Calc.last_result = self.number - other.number
         return self.number - other.number
-
-
-first = Calc(10)
-second = Calc(100)
-print(first.last_result)
-print(first / second)
-print(first.last_result)
-# print(dir(first))
-# print(first // second)
-print(second - first)
-print(first.last_result)
