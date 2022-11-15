@@ -75,4 +75,5 @@ def result_of_decomposition(number):
         return "Can't withdraw this sum"
 
 
-my_print(result_of_decomposition(110))
+print(decomposition(1870, denomination_of_banknotes, cash_in_terminal))
+my_print(result_of_decomposition(1870))

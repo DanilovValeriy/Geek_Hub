@@ -26,42 +26,41 @@ import sqlite3
 db = sqlite3.connect('server.db')
 sql = db.cursor()
 
-D = [1000, 500, 200, 100, 50, 20, 10]
+denomination_of_banknotes = [1000, 500, 200, 100, 50, 20, 10]
 
+sql.execute("""CREATE TABLE IF NOT EXISTS users (
+            login TEXT,
+            password TEXT,
+            balance BIGINT,
+            is_collector BOOLEAN
+            )""")
+db.commit()
 
-# sql.execute("""CREATE TABLE IF NOT EXISTS users (
-#             login TEXT,
-#             password TEXT,
-#             balance BIGINT,
-#             is_collector BOOLEAN
-#             )""")
-# db.commit()
-#
-# sql.execute("""CREATE TABLE IF NOT EXISTS transactions (
-#             login TEXT,
-#             action TEXT
-#             )""")
-# db.commit()
-#
-# USERS = [
-#     ('Den', 'FRt%^%56', 1000, False),
-#     ('Valerii', '1234%%55', 1000, False),
-#     ('admin', 'admin', 10000, True),
-#     ('bankomat', 'bJ%f$$^vBJD55^&$%6', 1000, False)
-# ]
-# sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
-# db.commit()
-#
-# sql.execute("""CREATE TABLE IF NOT EXISTS bankomat (
-#             denomination INT,
-#             number INT
-#             )""")
-# db.commit()
-#
-# BANKOMAT = [(10, 10), (20, 10), (50, 10), (100, 10), (200, 10), (500, 10), (1000, 10)]
-#
-# sql.executemany("INSERT INTO bankomat VALUES (?, ?)", BANKOMAT)
-# db.commit()
+sql.execute("""CREATE TABLE IF NOT EXISTS transactions (
+            login TEXT,
+            action TEXT
+            )""")
+db.commit()
+
+USERS = [
+    ('Den', 'FRt%^%56', 1000, False),
+    ('Valerii', '1234%%55', 1000, False),
+    ('admin', 'admin', 10000, True),
+    ('bankomat', 'bJ%f$$^vBJD55^&$%6', 1000, False)
+]
+sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
+db.commit()
+
+sql.execute("""CREATE TABLE IF NOT EXISTS bankomat (
+            denomination INT,
+            number INT
+            )""")
+db.commit()
+
+BANKOMAT = [(1000, 10), (500, 10), (200, 10), (100, 10), (50, 10), (20, 10), (10, 10)]
+
+sql.executemany("INSERT INTO bankomat VALUES (?, ?)", BANKOMAT)
+db.commit()
 
 
 def logging(my_login, my_action):
@@ -312,7 +311,8 @@ def start(login):
                         elif cash_in_the_bankomat() > int(number):
                             chang = int(number) % 10
                             number = (int(number) // 10) * 10
-                            withdraw_from_atm(login, decomposition(number, D, denomination_in_atm(False)))
+                            withdraw_from_atm(login, decomposition(number, [1000, 500, 200, 100, 50, 20, 10],
+                                                                   denomination_in_atm(False)))
 
                             print(f'your chang = {chang}')
                             change_balance(login, int(number), '-')
@@ -362,59 +362,68 @@ def start(login):
                 print(err)
 
 
-def not_simple_decomposition(number, my_nominal):
-    index = 0
-    my_list = []
-    for el in my_nominal:
-        if number // el[0] > my_nominal[index][1]:
-            my_list.append(my_nominal[index][1])
-            number -= my_nominal[index][1] * el[0]
+def simple_decomposition(number, cash_in_terminal_list):
+    resulting_list = []
+    for index, el in enumerate(cash_in_terminal_list):
+        if number // el[0] > cash_in_terminal_list[index][1]:
+            resulting_list.append(cash_in_terminal_list[index][1])
+            number -= cash_in_terminal_list[index][1] * el[0]
         else:
-            my_list.append(number // el[0])
+            resulting_list.append(number // el[0])
             number %= el[0]
-        index += 1
-    return my_list
+    return resulting_list
 
 
-def composition(my_list, nominal_list):
+def composition(my_decomposition_list, nominal_list):
     my_sum = 0
-    for el in zip(nominal_list, my_list):
-        # print(el)
+    for el in zip(nominal_list, my_decomposition_list):
         my_sum += el[0] * el[1]
     return my_sum
 
 
-def decomposition(number, D, DEN):
-    if number > cash_in_the_bankomat():
-        print('There is not enough money in the ATM')
-        return None
+def decomposition(number, denomination_of_banknotes, cash_in_terminal):
     number = (number // 10) * 10
-    arr_inside = D[:]
-    finnaly_list = []
+    list_of_denomination = denomination_of_banknotes[:]
+    resulting_list = []
     flag = True
-    nom_list = DEN[:]
+    cash_in_terminal_list = cash_in_terminal[:]
     while flag:
-        copy_simple_dec = not_simple_decomposition(number, nom_list)
-        if composition(copy_simple_dec, arr_inside) == number:
-            if not (finnaly_list):
-                return copy_simple_dec
+        list_from_simple_decomposition = simple_decomposition(number, cash_in_terminal_list)
+        if composition(list_from_simple_decomposition, list_of_denomination) == number:
+            if not resulting_list:
+                return list_from_simple_decomposition
             else:
-                return finnaly_list + copy_simple_dec
-        if len(copy_simple_dec) == 0:
-            return finnaly_list
-        elif copy_simple_dec[0] > 0:
-            finnaly_list.append(copy_simple_dec[0] - 1)
-            el = copy_simple_dec.pop(0)
-            number -= (el - 1) * arr_inside.pop(0)
-            nom_list.pop(0)
+                return resulting_list + list_from_simple_decomposition
+        if len(list_from_simple_decomposition) == 0:
+            return resulting_list
+        elif list_from_simple_decomposition[0] > 0:
+            resulting_list.append(list_from_simple_decomposition[0] - 1)
+            coefficient = list_from_simple_decomposition.pop(0)
+            number -= (coefficient - 1) * list_of_denomination.pop(0)
+            cash_in_terminal_list.pop(0)
         else:
-            finnaly_list.append(copy_simple_dec.pop(0))
-            nom_list.pop(0)
+            resulting_list.append(list_from_simple_decomposition.pop(0))
+            cash_in_terminal_list.pop(0)
             try:
-                arr_inside.pop(0)
-            except IndexError as err:
+                list_of_denomination.pop(0)
+            except IndexError:
                 print('The entered amount cannot be issued')
                 return None
+
+
+def checking_correctness_amount(number, decomposite_list):
+    denomination_of_banknotes = [1000, 500, 200, 100, 50, 20, 10]
+    return number == composition(decomposite_list, denomination_of_banknotes)
+
+
+def result_of_decomposition(number):
+    denomination_of_banknotes = [1000, 500, 200, 100, 50, 20, 10]
+    cash_in_terminal = denomination_in_atm()
+    decomposite_list = decomposition(number, denomination_of_banknotes, cash_in_terminal)
+    if checking_correctness_amount(number, decomposite_list):
+        return decomposite_list
+    else:
+        return "Can't withdraw this sum"
 
 
 # print(decomposition())
