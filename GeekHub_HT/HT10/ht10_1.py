@@ -28,39 +28,40 @@ sql = db.cursor()
 
 denomination_of_banknotes = [1000, 500, 200, 100, 50, 20, 10]
 
-sql.execute("""CREATE TABLE IF NOT EXISTS users (
-            login TEXT,
-            password TEXT,
-            balance BIGINT,
-            is_collector BOOLEAN
-            )""")
-db.commit()
 
-sql.execute("""CREATE TABLE IF NOT EXISTS transactions (
-            login TEXT,
-            action TEXT
-            )""")
-db.commit()
-
-USERS = [
-    ('Den', 'FRt%^%56', 1000, False),
-    ('Valerii', '1234%%55', 1000, False),
-    ('admin', 'admin', 10000, True),
-    ('bankomat', 'bJ%f$$^vBJD55^&$%6', 1000, False)
-]
-sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
-db.commit()
-
-sql.execute("""CREATE TABLE IF NOT EXISTS bankomat (
-            denomination INT,
-            number INT
-            )""")
-db.commit()
-
-BANKOMAT = [(1000, 10), (500, 10), (200, 10), (100, 10), (50, 10), (20, 10), (10, 10)]
-
-sql.executemany("INSERT INTO bankomat VALUES (?, ?)", BANKOMAT)
-db.commit()
+# sql.execute("""CREATE TABLE IF NOT EXISTS users (
+#             login TEXT,
+#             password TEXT,
+#             balance BIGINT,
+#             is_collector BOOLEAN
+#             )""")
+# db.commit()
+#
+# sql.execute("""CREATE TABLE IF NOT EXISTS transactions (
+#             login TEXT,
+#             action TEXT
+#             )""")
+# db.commit()
+#
+# USERS = [
+#     ('Den', 'FRt%^%56', 1000, False),
+#     ('Valerii', '1234%%55', 1000, False),
+#     ('admin', 'admin', 10000, True),
+#     ('bankomat', 'bJ%f$$^vBJD55^&$%6', 1000, False)
+# ]
+# sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
+# db.commit()
+#
+# sql.execute("""CREATE TABLE IF NOT EXISTS bankomat (
+#             denomination INT,
+#             number INT
+#             )""")
+# db.commit()
+#
+# BANKOMAT = [(1000, 10), (500, 10), (200, 10), (100, 10), (50, 10), (20, 10), (10, 10)]
+#
+# sql.executemany("INSERT INTO bankomat VALUES (?, ?)", BANKOMAT)
+# db.commit()
 
 
 def logging(my_login, my_action):
