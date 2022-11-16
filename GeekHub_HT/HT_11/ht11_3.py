@@ -1,12 +1,14 @@
 """Банкомат 4.0: переробіть программу з функціонального підходу програмування на використання класів.
 Додайте шанс 10% отримати бонус на баланс при створенні нового користувача.
 """
-import sqlite3
 
-db = sqlite3.connect('server.db')
-sql = db.cursor()
 
-denomination_of_banknotes = [1000, 500, 200, 100, 50, 20, 10]
+# import sqlite3
+#
+# db = sqlite3.connect('server.db')
+# sql = db.cursor()
+#
+# denomination_of_banknotes = [1000, 500, 200, 100, 50, 20, 10]
 
 
 # sql.execute("""CREATE TABLE IF NOT EXISTS users (
