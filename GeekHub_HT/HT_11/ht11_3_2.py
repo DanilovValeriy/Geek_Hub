@@ -297,10 +297,10 @@ class ATM:
                                         ATM.denomination_in_atm()
                                         logging('admin', 'Big boss looking the balance an ATM')
                                     case 2:
-                                        ATM.change_atm_cash()
+                                        self.change_atm_cash()
 
                                     case 3:
-                                        ATM.history_of_logging()
+                                        self.history_of_logging()
 
                             except ValueError as err:
                                 print(err)
