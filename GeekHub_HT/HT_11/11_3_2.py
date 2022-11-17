@@ -50,6 +50,27 @@ def logging(my_login, my_action):
     db.commit()
 
 
+def choose_operation():
+    oper = input("Choose operation '+' or '-': ")
+    while oper not in {'+', '-'}:
+        oper = input("Choose operation '+' or '-': ")
+    return oper
+
+
+def my_input():
+    flag = True
+    while flag:
+        number = input('Input number bigger than zero\n')
+        try:
+            number = int(number)
+            if number > 0:
+                return number
+            else:
+                continue
+        except ValueError as err:
+            print(err)
+
+
 class ATM:
     def __init__(self, name, account_password, balance=0, exist=0):
         self.name = name
@@ -101,6 +122,42 @@ class ATM:
             print("You don't have access to system")
             print("Invalid login or password")
             return False
+
+    def cahge_atm_cash(self):
+        if self.name != 'admin':
+            print('Access denied')
+            return None
+        else:
+            DENOMINATION = [10, 20, 50, 100, 200, 500, 1000]
+            for nominal in DENOMINATION:
+                sql.execute(f"SELECT number FROM bankomat WHERE denomination = {nominal}")
+                old_number = sql.fetchone()[0]
+                g = input(f'Do you want working with {nominal}? y - changing balance, n - showing old balance: ')
+                if g in {'n', 'N'}:
+                    print(f'ATM has {old_number} of {nominal}')
+                    logging('admin', f'Looking ATM denomination - {nominal}, number - {old_number}')
+                    continue
+                operation = choose_operation()
+                if operation == '+':
+                    my_number = my_input()
+                    print(f'ATM has {old_number} of {nominal}')
+                    sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
+                                (old_number + int(my_number), nominal))
+                    db.commit()
+                    print(f'ATM have {old_number + int(my_number)} of {nominal}')
+                    logging('admin', f'Put on the ATM denomination - {nominal}, number - {my_number}')
+                else:
+                    my_number = my_input()
+                    print(f'ATM has {old_number} of {nominal}')
+                    while my_number > old_number:
+                        print(f'There are not enough bills of this denomination. ATM contains {old_number} numbers')
+                        logging('admin', 'There are not enough bills of this denomination')
+                        my_number = my_input()
+                    sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
+                                (old_number - int(my_number), nominal))
+                    db.commit()
+                    print(f'ATM have {old_number - int(my_number)} of {nominal}')
+                    logging('admin', f'Admin took the money from ATM denomination - {nominal}, number - {my_number}')
 
     def account_detail(self):
         print("\n----------ACCOUNT DETAIL----------")
