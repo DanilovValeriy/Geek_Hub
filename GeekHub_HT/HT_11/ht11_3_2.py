@@ -50,6 +50,14 @@ def logging(my_login, my_action):
     db.commit()
 
 
+def cash_in_the_bankomat():
+    sql.execute("SELECT denomination, number FROM bankomat")
+    my_sum = 0
+    for el in sql.fetchall():
+        my_sum += el[0] * el[1]
+    return my_sum
+
+
 def choose_operation():
     oper = input("Choose operation '+' or '-': ")
     while oper not in {'+', '-'}:
@@ -123,7 +131,7 @@ class ATM:
             print("Invalid login or password")
             return False
 
-    def cahge_atm_cash(self):
+    def change_atm_cash(self):
         if self.name != 'admin':
             print('Access denied')
             return None
@@ -165,6 +173,15 @@ class ATM:
         print(f"Account Password: {self.account_password}")
         print(f"Available balance: {self.balance}\n")
 
+    @staticmethod
+    def denomination_in_atm(f_print=True):
+        sql.execute("SELECT denomination, number FROM bankomat")
+        val = sql.fetchall()
+        for el in val:
+            if f_print:
+                print(f'Denomination {el[0]} has {el[1]}')
+        return val
+
     def deposit(self, amount):
         if ATM.check_number(amount):
             # lottery chance
@@ -182,6 +199,14 @@ class ATM:
             print("Current account balance: ", self.balance)
         else:
             print(f'You can not put {amount}')
+
+    def history_of_logging(self):
+        sql.execute(f"SELECT login, action FROM transactions")
+        for el in sql.fetchall():
+            if self.name == 'admin':
+                print(f'{el[0]} has operation {el[1]}')
+            elif el[0] == login:
+                print(el[1])
 
     def withdraw(self, amount):
         if not ATM.check_number(amount):
@@ -217,7 +242,9 @@ class ATM:
             2. Check Balance
             3. Deposit
             4. Withdraw
-            5. Exit
+            5. Information
+            6. Exit
+            11. If you admin input 11
         *********************
         """)
         option = 0
@@ -251,6 +278,32 @@ class ATM:
               Thanks for choosing us as your bank                  
           ******************************************
           """)
+                elif option == 11:
+                    if self.name != 'admin' or self.account_password != 'admin':
+                        print('Access denied')
+                        continue
+                    else:
+                        print('Hello, Big Boss! Make your choice')
+                        choice = 0
+                        while choice != 4:
+                            try:
+                                choice = int(input(
+                                    'Choice operation\n1. Denomination and balance ATM\n2. Change the balance ATM\n'
+                                    '3. History of using ATM\n4. Exit\n'))
+
+                                match choice:
+                                    case 1:
+                                        print(f'Balance of the ATM {cash_in_the_bankomat()}')
+                                        ATM.denomination_in_atm()
+                                        logging('admin', 'Big boss looking the balance an ATM')
+                                    case 2:
+                                        ATM.change_atm_cash()
+
+                                    case 3:
+                                        ATM.history_of_logging()
+
+                            except ValueError as err:
+                                print(err)
 
 
 print("*******WELCOME TO BANK*******")
