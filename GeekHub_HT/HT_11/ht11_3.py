@@ -33,7 +33,6 @@ denomination_of_banknotes = [1000, 500, 200, 100, 50, 20, 10]
 #     ('Den', 'FRt%^%56', 1000, False),
 #     ('Valerii', '1234%%55', 1000, False),
 #     ('admin', 'admin', 10000, True),
-#     ('bankomat', 'bJ%f$$^vBJD55^&$%6', 1000, False)
 # ]
 # sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
 # db.commit()

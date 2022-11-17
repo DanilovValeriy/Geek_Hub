@@ -7,6 +7,39 @@ import sqlite3
 
 db = sqlite3.connect('server.db')
 sql = db.cursor()
+#
+# sql.execute("""CREATE TABLE IF NOT EXISTS users (
+#             login TEXT,
+#             password TEXT,
+#             balance BIGINT,
+#             is_collector BOOLEAN
+#             )""")
+# db.commit()
+#
+# sql.execute("""CREATE TABLE IF NOT EXISTS transactions (
+#             login TEXT,
+#             action TEXT
+#             )""")
+# db.commit()
+#
+# USERS = [
+#     ('Den', 'FRt%^%56', 1000, False),
+#     ('Valerii', '1234%%55', 1000, False),
+#     ('admin', 'admin', 10000, True),
+# ]
+# sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
+# db.commit()
+#
+# sql.execute("""CREATE TABLE IF NOT EXISTS bankomat (
+#             denomination INT,
+#             number INT
+#             )""")
+# db.commit()
+#
+# BANKOMAT = [(1000, 10), (500, 10), (200, 10), (100, 10), (50, 10), (20, 10), (10, 10)]
+#
+# sql.executemany("INSERT INTO bankomat VALUES (?, ?)", BANKOMAT)
+# db.commit()
 
 denomination_of_banknotes = [1000, 500, 200, 100, 50, 20, 10]
 
@@ -18,16 +51,18 @@ def logging(my_login, my_action):
 
 
 class ATM:
-    def __init__(self, name, account_password, balance=0):
+    def __init__(self, name, account_password, balance=0, exist=0):
         self.name = name
-        if ATM.check_password(account_password):
+        if ATM.check_password(account_password) or account_password == 'admin':
             self.account_password = account_password
 
         else:
             raise Exception('Your password must contain more 5 characters and contain !@#$%^&')
         self.balance = balance
-        sql.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (self.name, self.account_password, balance, 0))
-        db.commit()
+        if exist == 0:
+            sql.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (self.name, self.account_password, balance, 0))
+            db.commit()
+            logging(self.name, 'Has been created')
 
     @staticmethod
     def check_password(password):
@@ -170,7 +205,7 @@ while choice not in {'x', 'X'}:
         login = input('Input your login: ')
         password = input('Input your password: ')
         if ATM.check_user_in_system(login, password):
-            atm = ATM(login, password, ATM.user_balance(login))
+            atm = ATM(login, password, ATM.user_balance(login), 1)
             atm.transaction()
     elif choice == 'n':
         choice = input("Do you want to create an account? y/n. Press x or X to exit\n")
