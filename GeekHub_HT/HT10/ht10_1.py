@@ -29,6 +29,7 @@ sql = db.cursor()
 denomination_of_banknotes = [1000, 500, 200, 100, 50, 20, 10]
 
 
+#
 # sql.execute("""CREATE TABLE IF NOT EXISTS users (
 #             login TEXT,
 #             password TEXT,
