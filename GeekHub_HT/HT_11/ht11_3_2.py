@@ -74,7 +74,7 @@ def my_input():
 class ATM:
     def __init__(self, name, account_password, balance=0, exist=0):
         self.name = name
-        if self.is_admin(account_password):
+        if self.check_password(account_password):
             self.account_password = account_password
         else:
             raise Exception('Your password must contain more 5 characters and contain !@#$%^&')
