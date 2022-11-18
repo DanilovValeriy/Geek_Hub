@@ -27,42 +27,32 @@ class Calc:
         """
     last_result = None
 
-    @staticmethod
-    def check_number(number):
+    def check_number(self, number):
         try:
             number = float(number)
-        except ValueError as err:
-            print(err, '\nNeed float or integer number')
-            return False
+        except ValueError:
+            raise ValueError('Numbers must be float or integer')
         return float(number)
 
     def add(self, first_number, second_number):
-        if not Calc.check_number(first_number) and Calc.check_number(second_number):
-            return 'Numbers must be float or integer'
-        last_result = first_number + second_number
+        last_result = self.check_number(first_number) + self.check_number(second_number)
         Calc.last_result = last_result
         return last_result
 
     def mul(self, first_number, second_number):
-        if not Calc.check_number(first_number) and Calc.check_number(second_number):
-            return 'Numbers must be float or integer'
-        last_result = first_number * second_number
+        last_result = self.check_number(first_number) * self.check_number(second_number)
         Calc.last_result = last_result
         return last_result
 
     def my_mod(self, first_number, second_number):
-        if not Calc.check_number(first_number) and Calc.check_number(second_number):
-            return 'Numbers must be float or integer'
         if second_number == 0:
             raise ZeroDivisionError
-        last_result = first_number / second_number
+        last_result = self.check_number(first_number) / self.check_number(second_number)
         Calc.last_result = last_result
         return last_result
 
     def sub(self, first_number, second_number):
-        if not Calc.check_number(first_number) and Calc.check_number(second_number):
-            return 'Numbers must be float or integer'
-        last_result = first_number * second_number
+        last_result = self.check_number(first_number) - self.check_number(second_number)
         Calc.last_result = last_result
         return last_result
 
