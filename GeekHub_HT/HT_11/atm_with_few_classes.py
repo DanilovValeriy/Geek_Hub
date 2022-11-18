@@ -1,7 +1,3 @@
-"""Банкомат 4.0: переробіть программу з функціонального підходу програмування на використання класів.
-Додайте шанс 10% отримати бонус на баланс при створенні нового користувача.
-"""
-
 import random
 import sqlite3
 
@@ -9,54 +5,11 @@ db = sqlite3.connect('server.db')
 sql = db.cursor()
 
 
-#
-# sql.execute("""CREATE TABLE IF NOT EXISTS users (
-#             login TEXT,
-#             password TEXT,
-#             balance BIGINT,
-#             is_collector BOOLEAN
-#             )""")
-# db.commit()
-#
-# sql.execute("""CREATE TABLE IF NOT EXISTS transactions (
-#             login TEXT,
-#             action TEXT
-#             )""")
-# db.commit()
-#
-# USERS = [
-#     ('Den', 'FRt%^%56', 1000, False),
-#     ('Valerii', '1234%%55', 1000, False),
-#     ('admin', 'admin', 10000, True),
-# ]
-# sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
-# db.commit()
-#
-# sql.execute("""CREATE TABLE IF NOT EXISTS bankomat (
-#             denomination INT,
-#             number INT
-#             )""")
-# db.commit()
-#
-# BANKOMAT = [(1000, 10), (500, 10), (200, 10), (100, 10), (50, 10), (20, 10), (10, 10)]
-#
-# sql.executemany("INSERT INTO bankomat VALUES (?, ?)", BANKOMAT)
-# db.commit()
-
-# denomination_of_banknotes = [1000, 500, 200, 100, 50, 20, 10]
-
-
-def logging(my_login, my_action):
-    sql.execute(f"INSERT INTO transactions (login, action) VALUES (?, ?)",
-                (my_login, my_action))
-    db.commit()
-
-
 def choose_operation():
-    oper = input("Choose operation '+' or '-': ")
-    while oper not in {'+', '-'}:
-        oper = input("Choose operation '+' or '-': ")
-    return oper
+    operation = input("Choose operation '+' or '-': ")
+    while operation not in {'+', '-'}:
+        operation = input("Choose operation '+' or '-': ")
+    return operation
 
 
 def my_input():
@@ -73,34 +26,57 @@ def my_input():
             print(err)
 
 
-class ATM:
-    def __init__(self, name, account_password, balance=0, exist=0):
-        self.name = name
-        if self.check_password(account_password):
-            self.account_password = account_password
-        else:
-            raise Exception('Your password must contain more 5 characters and contain !@#$%^&')
-        self.balance = balance
-        if exist == 0:
-            self.create_new_user()
+class User():
 
     def create_new_user(self):
         sql.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (self.name, self.account_password, self.balance, 0))
         db.commit()
         logging(self.name, 'Has been created')
 
-    def cash_in_the_bankomat(self):
-        sql.execute("SELECT denomination, number FROM bankomat")
-        my_sum = 0
-        for el in sql.fetchall():
-            my_sum += el[0] * el[1]
-        return my_sum
-
     def check_password(self, password):
         if len(password) > 5 and set('!@#$%^&*').intersection(set(password)) or password == 'admin':
             return True
         else:
             return False
+
+    @staticmethod
+    def check_user_in_system(my_login, my_password):
+        sql.execute("SELECT login, password FROM users")
+        if (my_login, my_password) in sql.fetchall():
+            print("Welcome to the system")
+            return True
+        else:
+            print("You don't have access to system")
+            print("Invalid login or password")
+            return False
+
+    def account_detail(self):
+        print("\n----------ACCOUNT DETAIL----------")
+        print(f"Account Holder: {self.name.upper()}")
+        print(f"Account Password: {self.account_password}")
+        print(f"Available balance: {self.balance}\n")
+
+    def logging(my_login, my_action):
+        sql.execute(f"INSERT INTO transactions (login, action) VALUES (?, ?)",
+                    (my_login, my_action))
+        db.commit()
+
+    def history_of_logging(self):
+        sql.execute(f"SELECT login, action FROM transactions")
+        for el in sql.fetchall():
+            if self.name == 'admin':
+                print(f'{el[0]} has operation {el[1]}')
+            elif el[0] == login:
+                print(el[1])
+
+
+class ATM():
+    def cash_in_the_atm(self):
+        sql.execute("SELECT denomination, number FROM bankomat")
+        my_sum = 0
+        for el in sql.fetchall():
+            my_sum += el[0] * el[1]
+        return my_sum
 
     @staticmethod
     def check_number(amount):
@@ -121,17 +97,6 @@ class ATM:
         for el in sql.fetchall():
             if el[0] == login:
                 return el[1]
-
-    @staticmethod
-    def check_user_in_system(my_login, my_password):
-        sql.execute("SELECT login, password FROM users")
-        if (my_login, my_password) in sql.fetchall():
-            print("Welcome to the system")
-            return True
-        else:
-            print("You don't have access to system")
-            print("Invalid login or password")
-            return False
 
     def change_atm_cash(self):
         if self.name != 'admin':
@@ -169,20 +134,14 @@ class ATM:
                     print(f'ATM have {old_number - int(my_number)} of {nominal}')
                     logging('admin', f'Admin took the money from ATM denomination - {nominal}, number - {my_number}')
 
-    def account_detail(self):
-        print("\n----------ACCOUNT DETAIL----------")
-        print(f"Account Holder: {self.name.upper()}")
-        print(f"Account Password: {self.account_password}")
-        print(f"Available balance: {self.balance}\n")
-
     @staticmethod
     def denomination_in_atm(f_print=True):
         sql.execute("SELECT denomination, number FROM bankomat")
-        val = sql.fetchall()
-        for el in val:
+        tuple_of_denomination = sql.fetchall()
+        for el in tuple_of_denomination:
             if f_print:
                 print(f'Denomination {el[0]} has {el[1]}')
-        return val
+        return tuple_of_denomination
 
     def deposit(self, amount):
         if ATM.check_number(amount):
@@ -201,14 +160,6 @@ class ATM:
             print("Current account balance: ", self.balance)
         else:
             print(f'You can not put {amount}')
-
-    def history_of_logging(self):
-        sql.execute(f"SELECT login, action FROM transactions")
-        for el in sql.fetchall():
-            if self.name == 'admin':
-                print(f'{el[0]} has operation {el[1]}')
-            elif el[0] == login:
-                print(el[1])
 
     def withdraw(self, amount):
         if not ATM.check_number(amount):
