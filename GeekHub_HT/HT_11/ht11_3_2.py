@@ -50,14 +50,6 @@ def logging(my_login, my_action):
     db.commit()
 
 
-def cash_in_the_bankomat():
-    sql.execute("SELECT denomination, number FROM bankomat")
-    my_sum = 0
-    for el in sql.fetchall():
-        my_sum += el[0] * el[1]
-    return my_sum
-
-
 def choose_operation():
     oper = input("Choose operation '+' or '-': ")
     while oper not in {'+', '-'}:
@@ -82,20 +74,28 @@ def my_input():
 class ATM:
     def __init__(self, name, account_password, balance=0, exist=0):
         self.name = name
-        if ATM.check_password(account_password) or account_password == 'admin':
+        if self.is_admin(account_password):
             self.account_password = account_password
-
         else:
             raise Exception('Your password must contain more 5 characters and contain !@#$%^&')
         self.balance = balance
         if exist == 0:
-            sql.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (self.name, self.account_password, balance, 0))
-            db.commit()
-            logging(self.name, 'Has been created')
+            self.create_new_user()
 
-    @staticmethod
-    def check_password(password):
-        if len(password) > 5 and set('!@#$%^&*').intersection(set(password)):
+    def create_new_user(self):
+        sql.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (self.name, self.account_password, self.balance, 0))
+        db.commit()
+        logging(self.name, 'Has been created')
+
+    def cash_in_the_bankomat(self):
+        sql.execute("SELECT denomination, number FROM bankomat")
+        my_sum = 0
+        for el in sql.fetchall():
+            my_sum += el[0] * el[1]
+        return my_sum
+
+    def check_password(self, password):
+        if len(password) > 5 and set('!@#$%^&*').intersection(set(password)) or password == 'admin':
             return True
         else:
             return False
@@ -293,7 +293,7 @@ class ATM:
 
                                 match choice:
                                     case 1:
-                                        print(f'Balance of the ATM {cash_in_the_bankomat()}')
+                                        print(f'Balance of the ATM {atm.cash_in_the_bankomat()}')
                                         ATM.denomination_in_atm()
                                         logging('admin', 'Big boss looking the balance an ATM')
                                     case 2:

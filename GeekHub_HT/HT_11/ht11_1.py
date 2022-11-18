@@ -19,35 +19,61 @@ https://realpython.com/documenting-python-code/ )'''
 class Calc:
     """The class was created to calculate elementary arithmetic operations
 
-    Raises:
-        ZeroDivisionError: if in __truediv__ second argument == 0
+        Raises:
+            ZeroDivisionError: if in __truediv__ second argument == 0
 
-    Returns:
-        _type_: integer or float
-    """
+        Returns:
+            _type_: integer or float
+        """
     last_result = None
 
-    def __init__(self, number):
-        """
-        number : float or int
-        number for arithmetic operation
-        """
-        self.number = number
+    @staticmethod
+    def check_number(number):
+        try:
+            number = float(number)
+        except ValueError as err:
+            print(err, '\nNeed float or integer number')
+            return False
+        return float(number)
 
-    def __add__(self, other):
-        Calc.last_result = self.number + other.number
-        return self.number + other.number
+    def add(self, first_number, second_number):
+        if not Calc.check_number(first_number) and Calc.check_number(second_number):
+            return 'Numbers must be float or integer'
+        last_result = first_number + second_number
+        Calc.last_result = last_result
+        return last_result
 
-    def __mul__(self, other):
-        Calc.last_result = self.number * other.number
-        return self.number * other.number
+    def mul(self, first_number, second_number):
+        if not Calc.check_number(first_number) and Calc.check_number(second_number):
+            return 'Numbers must be float or integer'
+        last_result = first_number * second_number
+        Calc.last_result = last_result
+        return last_result
 
-    def __truediv__(self, other):
-        if other.number == 0:
-            raise ZeroDivisionError(f'Division by zero!')
-        Calc.last_result = self.number / other.number
-        return self.number / other.number
+    def my_mod(self, first_number, second_number):
+        if not Calc.check_number(first_number) and Calc.check_number(second_number):
+            return 'Numbers must be float or integer'
+        if second_number == 0:
+            raise ZeroDivisionError
+        last_result = first_number / second_number
+        Calc.last_result = last_result
+        return last_result
 
-    def __sub__(self, other):
-        Calc.last_result = self.number - other.number
-        return self.number - other.number
+    def sub(self, first_number, second_number):
+        if not Calc.check_number(first_number) and Calc.check_number(second_number):
+            return 'Numbers must be float or integer'
+        last_result = first_number * second_number
+        Calc.last_result = last_result
+        return last_result
+
+
+a = Calc()
+print(a.last_result)
+print(a.add(1, 4))
+print(a.last_result)
+print(a.sub(10, 20))
+print(a.last_result)
+print(a.mul(11, 33))
+print(a.last_result)
+print(a.my_mod(11, 33))
+print(a.last_result)
