@@ -1,3 +1,7 @@
+"""Банкомат 4.0: переробіть программу з функціонального підходу програмування на використання класів.
+Додайте шанс 10% отримати бонус на баланс при створенні нового користувача.
+"""
+
 import random
 import sqlite3
 
@@ -5,11 +9,42 @@ db = sqlite3.connect('server.db')
 sql = db.cursor()
 
 
-class LoginMixin():
-    def logging(my_login, my_action):
-        sql.execute(f"INSERT INTO transactions (login, action) VALUES (?, ?)",
-                    (my_login, my_action))
-        db.commit()
+def create_tables_in_db():
+    sql.execute("""CREATE TABLE IF NOT EXISTS users (
+                login TEXT,
+                password TEXT,
+                balance BIGINT,
+                is_collector BOOLEAN
+                )""")
+    db.commit()
+
+    sql.execute("""CREATE TABLE IF NOT EXISTS transactions (
+                login TEXT,
+                action TEXT
+                )""")
+    db.commit()
+
+    USERS = [
+        ('Den', 'FRt%^%56', 1000, False),
+        ('Valerii', '1234%%55', 1000, False),
+        ('admin', 'admin', 10000, True),
+    ]
+    sql.executemany("INSERT INTO users VALUES (?, ?, ?, ?)", USERS)
+    db.commit()
+
+    sql.execute("""CREATE TABLE IF NOT EXISTS bankomat (
+                denomination INT,
+                number INT
+                )""")
+    db.commit()
+
+    BANKOMAT = [(1000, 10), (500, 10), (200, 10), (100, 10), (50, 10), (20, 10), (10, 10)]
+
+    sql.executemany("INSERT INTO bankomat VALUES (?, ?)", BANKOMAT)
+    db.commit()
+
+
+class LogingMixin:
 
     def history_of_logging(self):
         sql.execute(f"SELECT login, action FROM transactions")
@@ -19,34 +54,46 @@ class LoginMixin():
             elif el[0] == login:
                 print(el[1])
 
-
-def choose_operation():
-    operation = input("Choose operation '+' or '-': ")
-    while operation not in {'+', '-'}:
-        operation = input("Choose operation '+' or '-': ")
-    return operation
-
-
-def my_input():
-    flag = True
-    while flag:
-        number = input('Input number bigger than zero\n')
-        try:
-            number = int(number)
-            if number > 0:
-                return number
-            else:
-                continue
-        except ValueError as err:
-            print(err)
-
-
-class User(LoginMixin):
-
-    def create_new_user(self):
-        sql.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (self.name, self.account_password, self.balance, 0))
+    def logging(self, my_login, my_action):
+        sql.execute(f"INSERT INTO transactions (login, action) VALUES (?, ?)",
+                    (my_login, my_action))
         db.commit()
-        logging(self.name, 'Has been created')
+
+
+# denomination_of_banknotes = [1000, 500, 200, 100, 50, 20, 10]
+
+
+class InputMixin:
+    def choose_operation(self):
+        oper = input("Choose operation '+' or '-': ")
+        while oper not in {'+', '-'}:
+            oper = input("Choose operation '+' or '-': ")
+        return oper
+
+    def my_input(self):
+        flag = True
+        while flag:
+            number = input('Input number bigger than zero\n')
+            try:
+                number = int(number)
+                if number > 0:
+                    return number
+                else:
+                    continue
+            except ValueError as err:
+                print(err)
+
+
+class Users(LogingMixin):
+    def __init__(self, name, account_password, balance=0, exist=0):
+        self.name = name
+        if self.check_password(account_password):
+            self.account_password = account_password
+        else:
+            raise Exception('Your password must contain more 5 characters and contain !@#$%^&')
+        self.balance = balance
+        if exist == 0:
+            self.create_new_user()
 
     def check_password(self, password):
         if len(password) > 5 and set('!@#$%^&*').intersection(set(password)) or password == 'admin':
@@ -54,16 +101,10 @@ class User(LoginMixin):
         else:
             return False
 
-    @staticmethod
-    def check_user_in_system(my_login, my_password):
-        sql.execute("SELECT login, password FROM users")
-        if (my_login, my_password) in sql.fetchall():
-            print("Welcome to the system")
-            return True
-        else:
-            print("You don't have access to system")
-            print("Invalid login or password")
-            return False
+    def create_new_user(self):
+        sql.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (self.name, self.account_password, self.balance, 0))
+        db.commit()
+        self.logging(self.name, 'Has been created')
 
     def account_detail(self):
         print("\n----------ACCOUNT DETAIL----------")
@@ -72,8 +113,9 @@ class User(LoginMixin):
         print(f"Available balance: {self.balance}\n")
 
 
-class ATM(LoginMixin):
-    def cash_in_the_atm(self):
+class ATM(InputMixin, Users):
+
+    def cash_in_the_bankomat(self):
         sql.execute("SELECT denomination, number FROM bankomat")
         my_sum = 0
         for el in sql.fetchall():
@@ -100,6 +142,17 @@ class ATM(LoginMixin):
             if el[0] == login:
                 return el[1]
 
+    @staticmethod
+    def check_user_in_system(my_login, my_password):
+        sql.execute("SELECT login, password FROM users")
+        if (my_login, my_password) in sql.fetchall():
+            print("Welcome to the system")
+            return True
+        else:
+            print("You don't have access to system")
+            print("Invalid login or password")
+            return False
+
     def change_atm_cash(self):
         if self.name != 'admin':
             print('Access denied')
@@ -112,38 +165,39 @@ class ATM(LoginMixin):
                 g = input(f'Do you want working with {nominal}? y - changing balance, n - showing old balance: ')
                 if g in {'n', 'N'}:
                     print(f'ATM has {old_number} of {nominal}')
-                    logging('admin', f'Looking ATM denomination - {nominal}, number - {old_number}')
+                    self.logging('admin', f'Looking ATM denomination - {nominal}, number - {old_number}')
                     continue
-                operation = choose_operation()
+                operation = self.choose_operation()
                 if operation == '+':
-                    my_number = my_input()
+                    my_number = self.my_input()
                     print(f'ATM has {old_number} of {nominal}')
                     sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
                                 (old_number + int(my_number), nominal))
                     db.commit()
                     print(f'ATM have {old_number + int(my_number)} of {nominal}')
-                    logging('admin', f'Put on the ATM denomination - {nominal}, number - {my_number}')
+                    self.logging('admin', f'Put on the ATM denomination - {nominal}, number - {my_number}')
                 else:
-                    my_number = my_input()
+                    my_number = self.my_input()
                     print(f'ATM has {old_number} of {nominal}')
                     while my_number > old_number:
                         print(f'There are not enough bills of this denomination. ATM contains {old_number} numbers')
-                        logging('admin', 'There are not enough bills of this denomination')
-                        my_number = my_input()
+                        self.logging('admin', 'There are not enough bills of this denomination')
+                        my_number = self.my_input()
                     sql.execute(f"UPDATE bankomat SET number =? where denomination =?",
                                 (old_number - int(my_number), nominal))
                     db.commit()
                     print(f'ATM have {old_number - int(my_number)} of {nominal}')
-                    logging('admin', f'Admin took the money from ATM denomination - {nominal}, number - {my_number}')
+                    self.logging('admin',
+                                 f'Admin took the money from ATM denomination - {nominal}, number - {my_number}')
 
     @staticmethod
     def denomination_in_atm(f_print=True):
         sql.execute("SELECT denomination, number FROM bankomat")
-        tuple_of_denomination = sql.fetchall()
-        for el in tuple_of_denomination:
+        val = sql.fetchall()
+        for el in val:
             if f_print:
                 print(f'Denomination {el[0]} has {el[1]}')
-        return tuple_of_denomination
+        return val
 
     def deposit(self, amount):
         if ATM.check_number(amount):
@@ -157,7 +211,7 @@ class ATM(LoginMixin):
             sql.execute(f"UPDATE users set balance =? where login =?", (self.balance, self.name))
             db.commit()
             print(f'Your account has been topped up. The amount on the account is {self.balance}')
-            logging(self.name, f'Your account has been topped up. The amount on the account is {self.balance}')
+            self.logging(self.name, f'Your account has been topped up. The amount on the account is {self.balance}')
 
             print("Current account balance: ", self.balance)
         else:
@@ -177,7 +231,7 @@ class ATM(LoginMixin):
             sql.execute(f"UPDATE users set balance =? where login =?", (self.balance, self.name))
             db.commit()
             print(f'You have withdrawn {self.balance}. The amount in the account is {self.balance}')
-            logging(self.name, f'You have withdrawn {amount}. The amount in the account is {self.balance}')
+            self.logging(self.name, f'You have withdrawn {amount}. The amount in the account is {self.balance}')
             print(f"{amount} withdrawal successful!")
             print("Current account balance: ", self.balance)
             print()
@@ -250,7 +304,7 @@ class ATM(LoginMixin):
                                     case 1:
                                         print(f'Balance of the ATM {atm.cash_in_the_bankomat()}')
                                         ATM.denomination_in_atm()
-                                        logging('admin', 'Big boss looking the balance an ATM')
+                                        self.logging('admin', 'Big boss looking the balance an ATM')
                                     case 2:
                                         self.change_atm_cash()
 
@@ -261,33 +315,29 @@ class ATM(LoginMixin):
                                 print(err)
 
 
-class MainMenu(ATM, User):
-
-    def menu(self):
-        choice = 0
-        while choice not in {'x', 'X'}:
-            choice = input("Do you have an account? y/n. Press x or X to exit\n")
-            if choice == "y":
-                login = input('Input your login: ')
-                password = input('Input your password: ')
-                if ATM.check_user_in_system(login, password):
-                    atm = ATM(login, password, ATM.user_balance(login), 1)
-                    atm.transaction()
-            elif choice == 'n':
-                choice = input("Do you want to create an account? y/n. Press x or X to exit\n")
-                if choice == 'y':
-                    print("___________________________________________________________\n")
-                    print("----------ACCOUNT CREATION----------")
-                    login = input("Enter your name: ")
-                    password = input("Enter your password MORE than 5 characters and contain !@#$%^: ")
-                    atm = ATM(login, password)
-                    atm.transaction()
-                    print("Congratulations! Account created successfully......\n")
-
+# create_tables_in_db()
 
 print("*******WELCOME TO BANK*******")
 
-man = MainMenu()
+choice = 0
+while choice not in {'x', 'X'}:
+    choice = input("Do you have an account? y/n. Press x or X to exit\n")
+    if choice == "y":
+        login = input('Input your login: ')
+        password = input('Input your password: ')
+        if ATM.check_user_in_system(login, password):
+            atm = ATM(login, password, ATM.user_balance(login), 1)
+            atm.transaction()
+    elif choice == 'n':
+        choice = input("Do you want to create an account? y/n. Press x or X to exit\n")
+        if choice == 'y':
+            print("___________________________________________________________\n")
+            print("----------ACCOUNT CREATION----------")
+            login = input("Enter your name: ")
+            password = input("Enter your password MORE than 5 characters and contain !@#$%^: ")
+            atm = ATM(login, password)
+            atm.transaction()
+            print("Congratulations! Account created successfully......\n")
 
 print("""
     -------------------------------------
