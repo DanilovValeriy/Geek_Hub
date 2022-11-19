@@ -36,24 +36,24 @@ class Calc:
 
     def add(self, first_number, second_number):
         last_result = self.check_number(first_number) + self.check_number(second_number)
-        Calc.last_result = last_result
+        self.last_result = last_result
         return last_result
 
     def mul(self, first_number, second_number):
         last_result = self.check_number(first_number) * self.check_number(second_number)
-        Calc.last_result = last_result
+        self.last_result = last_result
         return last_result
 
     def my_mod(self, first_number, second_number):
         if second_number == 0:
             raise ZeroDivisionError
         last_result = self.check_number(first_number) / self.check_number(second_number)
-        Calc.last_result = last_result
+        self.last_result = last_result
         return last_result
 
     def sub(self, first_number, second_number):
         last_result = self.check_number(first_number) - self.check_number(second_number)
-        Calc.last_result = last_result
+        self.last_result = last_result
         return last_result
 
 

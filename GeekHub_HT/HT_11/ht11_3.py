@@ -142,8 +142,7 @@ class ATM(InputMixin, Users):
             if el[0] == login:
                 return el[1]
 
-    @staticmethod
-    def check_user_in_system(my_login, my_password):
+    def check_user_in_system(self, my_login, my_password):
         sql.execute("SELECT login, password FROM users")
         if (my_login, my_password) in sql.fetchall():
             print("Welcome to the system")
@@ -200,7 +199,7 @@ class ATM(InputMixin, Users):
         return val
 
     def deposit(self, amount):
-        if ATM.check_number(amount):
+        if self.check_number(amount):
             # lottery chance
             lottery = random.randint(1, 1000)
             if lottery % 10 == 0:
@@ -218,7 +217,7 @@ class ATM(InputMixin, Users):
             print(f'You can not put {amount}')
 
     def withdraw(self, amount):
-        if not ATM.check_number(amount):
+        if not self.check_number(amount):
             print(f'You can not withdraw {amount}')
             return None
         elif amount > self.balance:
@@ -303,7 +302,7 @@ class ATM(InputMixin, Users):
                                 match choice:
                                     case 1:
                                         print(f'Balance of the ATM {atm.cash_in_the_bankomat()}')
-                                        ATM.denomination_in_atm()
+                                        self.denomination_in_atm()
                                         self.logging('admin', 'Big boss looking the balance an ATM')
                                     case 2:
                                         self.change_atm_cash()
