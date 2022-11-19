@@ -142,7 +142,8 @@ class ATM(InputMixin, Users):
             if el[0] == login:
                 return el[1]
 
-    def check_user_in_system(self, my_login, my_password):
+    @staticmethod
+    def check_user_in_system(my_login, my_password):
         sql.execute("SELECT login, password FROM users")
         if (my_login, my_password) in sql.fetchall():
             print("Welcome to the system")
