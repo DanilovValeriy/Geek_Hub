@@ -5,6 +5,21 @@ db = sqlite3.connect('server.db')
 sql = db.cursor()
 
 
+class LoginMixin():
+    def logging(my_login, my_action):
+        sql.execute(f"INSERT INTO transactions (login, action) VALUES (?, ?)",
+                    (my_login, my_action))
+        db.commit()
+
+    def history_of_logging(self):
+        sql.execute(f"SELECT login, action FROM transactions")
+        for el in sql.fetchall():
+            if self.name == 'admin':
+                print(f'{el[0]} has operation {el[1]}')
+            elif el[0] == login:
+                print(el[1])
+
+
 def choose_operation():
     operation = input("Choose operation '+' or '-': ")
     while operation not in {'+', '-'}:
@@ -26,7 +41,7 @@ def my_input():
             print(err)
 
 
-class User():
+class User(LoginMixin):
 
     def create_new_user(self):
         sql.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (self.name, self.account_password, self.balance, 0))
@@ -56,21 +71,8 @@ class User():
         print(f"Account Password: {self.account_password}")
         print(f"Available balance: {self.balance}\n")
 
-    def logging(my_login, my_action):
-        sql.execute(f"INSERT INTO transactions (login, action) VALUES (?, ?)",
-                    (my_login, my_action))
-        db.commit()
 
-    def history_of_logging(self):
-        sql.execute(f"SELECT login, action FROM transactions")
-        for el in sql.fetchall():
-            if self.name == 'admin':
-                print(f'{el[0]} has operation {el[1]}')
-            elif el[0] == login:
-                print(el[1])
-
-
-class ATM():
+class ATM(LoginMixin):
     def cash_in_the_atm(self):
         sql.execute("SELECT denomination, number FROM bankomat")
         my_sum = 0
@@ -259,27 +261,33 @@ class ATM():
                                 print(err)
 
 
+class MainMenu(ATM, User):
+
+    def menu(self):
+        choice = 0
+        while choice not in {'x', 'X'}:
+            choice = input("Do you have an account? y/n. Press x or X to exit\n")
+            if choice == "y":
+                login = input('Input your login: ')
+                password = input('Input your password: ')
+                if ATM.check_user_in_system(login, password):
+                    atm = ATM(login, password, ATM.user_balance(login), 1)
+                    atm.transaction()
+            elif choice == 'n':
+                choice = input("Do you want to create an account? y/n. Press x or X to exit\n")
+                if choice == 'y':
+                    print("___________________________________________________________\n")
+                    print("----------ACCOUNT CREATION----------")
+                    login = input("Enter your name: ")
+                    password = input("Enter your password MORE than 5 characters and contain !@#$%^: ")
+                    atm = ATM(login, password)
+                    atm.transaction()
+                    print("Congratulations! Account created successfully......\n")
+
+
 print("*******WELCOME TO BANK*******")
 
-choice = 0
-while choice not in {'x', 'X'}:
-    choice = input("Do you have an account? y/n. Press x or X to exit\n")
-    if choice == "y":
-        login = input('Input your login: ')
-        password = input('Input your password: ')
-        if ATM.check_user_in_system(login, password):
-            atm = ATM(login, password, ATM.user_balance(login), 1)
-            atm.transaction()
-    elif choice == 'n':
-        choice = input("Do you want to create an account? y/n. Press x or X to exit\n")
-        if choice == 'y':
-            print("___________________________________________________________\n")
-            print("----------ACCOUNT CREATION----------")
-            login = input("Enter your name: ")
-            password = input("Enter your password MORE than 5 characters and contain !@#$%^: ")
-            atm = ATM(login, password)
-            atm.transaction()
-            print("Congratulations! Account created successfully......\n")
+man = MainMenu()
 
 print("""
     -------------------------------------

@@ -2,25 +2,26 @@ class Kettle:
 
     def turn_on(self):
         print('You turn the button')
-        self.boil()
-        self.check_temperature()
-        self.beep()
-        self.turn_off()
+        self.__boil()
+        self.__check_temperature()
+        self.__beep()
+        self.__turn_off()
 
-    def boil(self):
+    def __boil(self):
         print('Water heating')
 
-    def check_temperature(self):
+    def __check_temperature(self):
         print('Check the water temperature')
 
-    def beep(self):
+    def __beep(self):
         print('Sound signal')
 
-    def turn_off(self):
+    def __turn_off(self):
         print('Auto turn off')
 
 
 my_kettle = Kettle()
 my_kettle.turn_on()
 # my_kettle.beep()
-# my_kettle.boil()
+# my_kettle.__boil()
+# my_kettle._Kettle__boil()
