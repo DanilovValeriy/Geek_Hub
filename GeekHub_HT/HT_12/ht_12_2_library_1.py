@@ -2,6 +2,8 @@
 Наприклад вона може містити класи Person, Teacher, Student, Book, Shelf, Author, Category і.т.д. Можна робити по
 прикладу банкомату з меню, базою даних і т.д. '''
 
+import random
+
 
 class Human:
 
@@ -40,13 +42,54 @@ class Accounting:
 
 
 class Administration(Human):
-    #     наслідує від класу людей
     def __init__(self, first_name, last_name, gender, work_category):
         super().__init__(first_name, last_name, gender)
+
         self.work_category = Accounting(work_category)
 
     def get_position(self):
         return self.work_category
 
-# vlad = Administration('Vlad', 'Hotunov', 'Man', 'Library Director')
-# print(vlad.work_category.salary)
+
+class LibraryAccount:
+    def __init__(self):
+        self.library_number = random.randint(100000, 999999)
+
+
+class Student(Human):
+    The_books_keeps = []
+
+    def __init__(self, faculty, course, first_name, last_name, gender):
+        super().__init__(first_name, last_name, gender)
+        self.faculty = faculty
+        self.course = course
+        self.library_account = LibraryAccount()
+
+    def take_to_read_a_book(self):
+        pass
+
+
+class Book:
+
+    def __init__(self, title, author, publishing_house, year_of_publication):
+        self.title = title
+        self.author = author
+        self.publishing_house = publishing_house
+        self.year_of_publication = year_of_publication
+
+    def book_info(self):
+        print(f'Book title {self.title}')
+        if isinstance(self.author, Human):
+            return self.author.human_info()
+
+
+vlad = Administration('Vlad', 'Hotunov', 'Man', 'Library Director')
+print(vlad.work_category.salary)
+print()
+vova = Human('Vova', 'Naumenko', 'Man')
+my_tails = Book('My life', vova, 'Amalgama', 2013)
+my_tails.author.human_info()
+my_tails.book_info()
+print()
+student = Student('Math', 3, 'Danilov', 'Valerii', 'Man')
+print(student.library_account.library_number)
