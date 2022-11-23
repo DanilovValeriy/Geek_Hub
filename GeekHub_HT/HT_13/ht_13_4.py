@@ -8,7 +8,7 @@
 class MyList(list):
     def __getitem__(self, index):
         if index == 0:
-            raise IndexError("list index out of range")
+            raise IndexError('list index out of range')
         index -= 1
         return super().__getitem__(index)
 
