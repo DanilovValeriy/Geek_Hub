@@ -53,3 +53,5 @@ print(my_transaction.date)
 print(my_transaction.currency)
 print(my_transaction.description)
 print(my_transaction.usd)
+# raise Exception AttributeError
+# my_transaction.description = 'I am change my mind'
