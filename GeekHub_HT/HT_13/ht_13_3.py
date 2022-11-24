@@ -44,7 +44,7 @@ class Transaction:
 
     @property
     def usd(self):
-        return self.usd_conversion_rate * self._amount
+        return self.usd_conversion_rate * self.amount
 
 
 my_transaction = Transaction(10000, '20-07-2020', 'UAH', 0.037, 'took out money from the nightstand')

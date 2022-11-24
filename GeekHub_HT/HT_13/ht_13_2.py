@@ -64,9 +64,9 @@ my_matrix.print_out()
 print('Transpose matrix')
 my_matrix.transpose()
 
-print('\nwithout fill method')
 # without fill method
 # must contained only 0 values
+print('\nwithout fill method')
 my_matrix = Matrix(2, 3)
 my_matrix.print_out()
 print('Transpose matrix')
