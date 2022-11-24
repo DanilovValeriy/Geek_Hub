@@ -37,6 +37,8 @@ class Matrix:
 
     def create_matrix(self):
         matrix = []
+        if self.__fill is None:
+            self.__fill = [0] * self.columns * self.rows
         for i in range(self.rows):
             row_list = []
             for j in range(self.columns):
@@ -48,7 +50,7 @@ class Matrix:
     def print_out(self):
         matrix_list = self.create_matrix()
         for lists in matrix_list:
-            print(*lists, sep='|')
+            print(lists)
 
     def transpose(self):
         transpose_matrix = [[self.matrix[j][i] for j in range(len(self.matrix))] for i in range(len(self.matrix[0]))]
@@ -57,8 +59,15 @@ class Matrix:
 
 
 my_matrix = Matrix(2, 3)
-print(my_matrix.fill())
+my_matrix.fill()
 my_matrix.print_out()
-print(my_matrix.create_matrix())
+print('Transpose matrix')
+my_matrix.transpose()
+
+print('\nwithout fill method')
+# without fill method
+# must contained only 0 values
+my_matrix = Matrix(2, 3)
+my_matrix.print_out()
 print('Transpose matrix')
 my_matrix.transpose()
