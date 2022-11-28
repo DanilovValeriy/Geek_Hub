@@ -51,15 +51,35 @@ def print_currency():
             ''')
 
 
+def choose_currency() -> str:
+    CURRENCY_LIST = ['AUD', 'AZN', 'BYN', 'BGN', 'KRW', 'HKD', 'DKK', 'USD', 'EUR', 'EGP', 'JPY', 'PLN', 'INR', 'CAD',
+                     'HRK', 'MXN',
+                     'MDL', 'ILS', 'NZD', 'NOK', 'ZAR', 'RUB', 'RON', 'IDR', 'SGD', 'XDR', 'KZT', 'TRY', 'HUF', 'GBP',
+                     'CZK', 'SEK',
+                     'CHF', 'CNY']
+
+    flag = True
+    while flag:
+        print_currency()
+        currency = input('Input abbreviation of currency')
+        if currency not in CURRENCY_LIST:
+            continue
+        else:
+            flag = False
+            return my_url_join(currency)
+
+
 def my_url_join(url):
     URL = 'https://bank.gov.ua/ua/markets/exchangerates'
     ADDITIONAL_URL = '-chart?cn%5B%5D='
     return str(URL)[:-1] + ADDITIONAL_URL + url
 
 
-def url_date_join(first_date, second_date):
+def url_date_join(first_date: str, second_date: str) -> str:
+    BASE_URL = choose_currency()
     START = '&startDate='
     END = '&endDate='
+    return BASE_URL + START + first_date + END + second_date
 
 
 def check_data(my_data):
@@ -88,4 +108,9 @@ first_data_data = datetime.strptime(first_data, '%d.%m.%Y')
 second_data_data = datetime.strptime(second_data, '%d.%m.%Y')
 
 if second_data_data < first_data_data:
-    second_data_data, first_data_data = first_data_data, second_data_data
+    second_data, first_data = first_data, second_data
+
+print(url_date_join(first_data, second_data))
+
+# 12.12.2000
+# 12.12.2001
