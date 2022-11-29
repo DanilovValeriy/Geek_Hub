@@ -1,9 +1,7 @@
-"""Банкомат 4.0: переробіть программу з функціонального підходу програмування на використання класів.
-Додайте шанс 10% отримати бонус на баланс при створенні нового користувача.
-"""
-
 import random
 import sqlite3
+
+import requests
 
 db = sqlite3.connect('server.db')
 sql = db.cursor()
@@ -114,6 +112,16 @@ class Users(LogingMixin):
 
 
 class ATM(InputMixin, Users):
+
+    @staticmethod
+    def get_current_exchange():
+        url = 'https://api.privatbank.ua/p24api/pubinfo?exchange&json&coursid=11'
+        response = requests.get(url)
+        data = response.json()
+        print(f"Euro\nBuy\t\tSell\n{data[0]['buy']}"
+              f"\t{data[0]['sale']}\n")
+        print(f"Dollar\nBuy\t\tSell\n{data[1]['buy']}"
+              f"\t{data[1]['sale']}\n")
 
     def cash_in_the_bankomat(self):
         sql.execute("SELECT denomination, number FROM bankomat")
@@ -253,6 +261,7 @@ class ATM(InputMixin, Users):
             4. Withdraw
             5. Information
             6. Exit
+            7. Look current exchange
             11. If you admin input 11
         *********************
         """)
@@ -274,6 +283,8 @@ class ATM(InputMixin, Users):
                 elif option == 4:
                     amount = int(input("How much you want to withdraw():"))
                     atm.withdraw(amount)
+                elif option == 7:
+                    ATM.get_current_exchange()
                 elif option == 5:
                     print(f"""
                 printing receipt..............
