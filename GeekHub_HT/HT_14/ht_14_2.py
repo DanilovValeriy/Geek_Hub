@@ -61,7 +61,7 @@ def choose_currency() -> str:
     flag = True
     while flag:
         print_currency()
-        currency = input('Input abbreviation of currency')
+        currency = input('Input abbreviation of currency\n')
         if currency not in CURRENCY_LIST:
             continue
         else:
