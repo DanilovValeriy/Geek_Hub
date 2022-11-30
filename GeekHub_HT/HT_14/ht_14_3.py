@@ -38,14 +38,13 @@ def get_content(html):
     i = 0
     for item in items:
         info_about_author = item.select_one("div span a")["href"]
-        if not info_about_author is None:
+        if info_about_author:
             my_articles.append({
                 'article': item.select_one('.text').text,
                 'author': item.select_one('small.author').text,
                 'info_about_author': get_author_info(item.select_one("div span a")["href"]).strip(),
                 'tags': item.select_one('.tags').text
             })
-        # print(my_articles[i])
         i += 1
     return my_articles
 
